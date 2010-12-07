@@ -1,1 +1,1 @@
-javaws ContestAppletProd.jnlp &
+javaws bin/ContestAppletProd.jnlp &
