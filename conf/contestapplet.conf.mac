@@ -1,5 +1,5 @@
 #TopCoder ContestApplet Preferences File
-#Wed Dec 08 01:09:05 JST 2010
+#Fri Dec 10 00:40:10 JST 2010
 com.topcoder.client.contestApplet.common.LocalPreferences.menufont=Arial
 com.topcoder.client.contestApplet.common.LocalPreferences.menufontsize=10
 com.topcoder.client.contestApplet.common.LocalPreferences.commonclasspath=/Users/wataken44/Documents/topcoder/bin/TZTester.jar\:/Users/wataken44/Documents/topcoder/bin/FileEdit.jar\:/Users/wataken44/Documents/topcoder/bin/CodeProcessor.jar
@@ -164,7 +164,7 @@ com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatQuestionBack=-16
 com.topcoder.jmaContestApplet.frames.codingframe.location=141\:527
 com.topcoder.jmaContestApplet.frames.codingframe.size=719\:474
 com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=59
-fileeditor.config.dirName=/Users/wataken44/Documents/topcoder/work
+fileeditor.config.dirName=/Users/wataken44/Documents/topcoder/work/src
 fileeditor.config.fileName=problem
 fileeditor.config.beginCut=//\ BEGIN\ CUT\ HERE
 fileeditor.config.endCut=//\ END\ CUT\ HERE
@@ -178,7 +178,7 @@ fileeditor.config.breakAt=60
 fileeditor.config.htmldesc=false
 fileeditor.config.backup=true
 fileeditor.config.javatemplate=$BEGINCUT$\n$PROBLEMDESC$\n$ENDCUT$\nimport\ java.util.*\;\npublic\ class\ $CLASSNAME$\ {\n\tpublic\ $RC$\ $METHODNAME$($METHODPARMS$)\ {\n\t\t\n\t}\n\tpublic\ static\ void\ main(String[]\ args)\ {\n\t\t$CLASSNAME$\ temp\ \=\ new\ $CLASSNAME$()\;\n\t\tSystem.out.println(temp.$METHODNAME$($METHODPARMS$))\;\n\t}\n}
-fileeditor.config.cpptemplate=\#line\ $NEXTLINENUMBER$\ "$FILENAME$"\n\n\#include\ <cstdio>\n\#include\ <cstdlib>\n\#include\ <cmath>\n\#include\ <climits>\n\#include\ <cfloat>\n\#include\ <map>\n\#include\ <utility>\n\#include\ <set>\n\#include\ <iostream>\n\#include\ <memory>\n\#include\ <string>\n\#include\ <vector>\n\#include\ <algorithm>\n\#include\ <functional>\n\#include\ <sstream>\n\#include\ <complex>\n\#include\ <stack>\n\#include\ <queue>\n\nusing\ namespace\ std\;\n\n\#define\ FOR(val,\ start,\ end)\ for(int\ val\ \=\ (start)\;\ val\ <\ (end)\;\ ++val)\n\nclass\ $CLASSNAME$\ {\n$BEGINCUT$\n/*\n$PROBLEMDESC$\n*/\n$ENDCUT$\n\n\ public\:\n\ \ $RC$\ $METHODNAME$($METHODPARMS$)\ {\n\ \ \ \ $RC$\ result\;\n\ \ \ \ //\ --\ \n\ \ \ \ \n\ \ \ \ return\ result\;\t\n\ \ }\n\n\ \ $TESTCODE$\n}\;\n\n$BEGINCUT$\n\nint\ main()\n{\n\ \ $CLASSNAME$\ test\;\n\ \ test.run_test(-1)\;\n\ \ \n\ \ return\ 0\;\n}\n\n$ENDCUT$\n
+fileeditor.config.cpptemplate=\#include\ <cstdio>\n\#include\ <cstdlib>\n\#include\ <cmath>\n\#include\ <climits>\n\#include\ <cfloat>\n\#include\ <map>\n\#include\ <utility>\n\#include\ <set>\n\#include\ <iostream>\n\#include\ <memory>\n\#include\ <string>\n\#include\ <vector>\n\#include\ <algorithm>\n\#include\ <functional>\n\#include\ <sstream>\n\#include\ <complex>\n\#include\ <stack>\n\#include\ <queue>\n\n//\ --\ utility\ --\n\n\nusing\ namespace\ std\;\n\nclass\ $CLASSNAME$\ {\n$BEGINCUT$\n/*\n$PROBLEMDESC$\n*/\n$ENDCUT$\n\n\ public\:\n\ \ $RC$\ $METHODNAME$($METHODPARMS$)\ {\n\ \ \ \ $RC$\ result\;\n\ \ \ \ //\ --\ main\ code\ --\n\ \ \ \ \n\ \ \ \ return\ result\;\t\n\ \ }\n\n\ \ $TESTCODE$\n}\;\n\n$BEGINCUT$\n\nint\ main()\n{\n\ \ $CLASSNAME$\ test\;\n\ \ test.run_test(-1)\;\n\ \ \n\ \ return\ 0\;\n}\n\n$ENDCUT$\n\n
 fileeditor.config.csharptemplate=using\ System\;\r\nusing\ System.Collections\;\r\npublic\ class\ $CLASSNAME$\ {\r\n\tpublic\ $RC$\ $METHODNAME$($METHODPARMS$)\ {\r\n\t\t$CARETPOSITION$\r\n\t}\r\n}
 fileeditor.config.javaextension=java
 fileeditor.config.cppextension=cpp

@@ -1,5 +1,3 @@
-#line $NEXTLINENUMBER$ "$FILENAME$"
-
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -19,9 +17,10 @@
 #include <stack>
 #include <queue>
 
-using namespace std;
+// -- utility --
 
-#define FOR(val, start, end) for(int val = (start); val < (end); ++val)
+
+using namespace std;
 
 class $CLASSNAME$ {
 $BEGINCUT$
@@ -33,7 +32,7 @@ $ENDCUT$
  public:
   $RC$ $METHODNAME$($METHODPARMS$) {
     $RC$ result;
-    // -- 
+    // -- main code --
     
     return result;	
   }
