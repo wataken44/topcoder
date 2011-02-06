@@ -23,6 +23,7 @@
 using namespace std;
 
 class BinaryCode {
+
 // BEGIN CUT HERE
 /*
 // PROBLEM STATEMENT
