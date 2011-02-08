@@ -19,8 +19,21 @@
 
 // -- utility --
 
+#define REP(i,n) for(int i=0;i<(n);++i)
+#define FOR(i,a,b) for(int i=(a);i<=(b);++i)
+#define FORD(i,a,b) for(int i=(a);i>=(b);--i)
+
+typedef long long LL;
+
+const LL INF = 1000000000000000LL;
+
+template <typename T> inline int size(const T& c)
+{
+  return static_cast<int>(c.size());
+}
 
 using namespace std;
+
 
 class GasStations {
 // BEGIN CUT HERE
@@ -117,11 +130,31 @@ Returns: 12792.0
 
  public:
   double tripCost(vector <int> dist, vector <int> price, int mpg, int tankSize, int tripLength) {
-    double result;
     // -- main code --
 
+    dist.push_back(tripLength);
+    price.push_back(0);
     
-    return result;	
+    int n = size(dist);
+    REP(i,n) REP(j,n-1) {
+      if(dist[j]>dist[j+1]) { swap(dist[j],dist[j+1]); swap(price[j],price[j+1]); }
+    }
+    tankSize *= mpg;
+    if(tankSize>tripLength) tankSize=tripLength;
+    vector<LL> ccc(tankSize+1);
+    FOR(i,0,tankSize) ccc[i]=INF;
+    ccc[tankSize] = 0;
+    REP(i,n) {
+      int dd=dist[i];
+      if(i>0) dd-=dist[i-1];
+      FOR(j,0,tankSize)
+        if(j+dd <= tankSize) ccc[j] = ccc[j+dd];
+        else ccc[j] = INF;
+      FOR(j,1,tankSize)
+        ccc[j] = min(ccc[j], ccc[j-1]+price[i]);
+    }
+    return double( ccc[tankSize]) / double(mpg);    
+
   }
 
   
