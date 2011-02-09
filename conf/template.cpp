@@ -18,7 +18,12 @@
 #include <queue>
 
 // -- utility --
-
+// C-style loop
+#define FOR(x, a, b) for(int x = static_cast<int>(a); x < static_cast<int>(b); ++x)
+#define FORN(x, n) FOR(x, 0, n)
+// Ruby-style loop
+#define UPTO(x, a, b) for(int x = static_cast<int>(a); x <= static_cast<int>(b); ++x)
+#define DOWNTO(x, a, b) for(int x = static_cast<int>(a); x >= static_cast<int>(b); --x)
 
 using namespace std;
 
