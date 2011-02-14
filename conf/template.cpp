@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <list>
 #include <algorithm>
 #include <functional>
 #include <sstream>
@@ -17,13 +18,17 @@
 #include <stack>
 #include <queue>
 
+typedef int int_type;
+
 // -- utility --
 // C-style loop
-#define FOR(x, a, b) for(int x = static_cast<int>(a); x < static_cast<int>(b); ++x)
+#define FOR(x, a, b) for(int_type x = static_cast<int_type>(a); x < static_cast<int_type>(b); ++x)
 #define FORN(x, n) FOR(x, 0, n)
 // Ruby-style loop
-#define UPTO(x, a, b) for(int x = static_cast<int>(a); x <= static_cast<int>(b); ++x)
-#define DOWNTO(x, a, b) for(int x = static_cast<int>(a); x >= static_cast<int>(b); --x)
+#define TIMES(x, n) FOR(x, 0, n)
+#define STEP(x, a, b, s) for(int_type x = static_cast<int_type>(a); s > 0 ? x <= static_cast<int_type>(b) : x >= static_cast<int_type>(b); x += static_cast<int_type>(s) )
+#define UPTO(x, a, b) for(int_type x = static_cast<int_type>(a); x <= static_cast<int_type>(b); ++x)
+#define DOWNTO(x, a, b) for(int_type x = static_cast<int_type>(a); x >= static_cast<int_type>(b); --x)
 
 using namespace std;
 
