@@ -21,7 +21,7 @@ def compile_main():
     dest_obj = destdir + os.path.splitext(os.path.basename(src))[0] + ".o"
     dest_exe = destdir + os.path.splitext(os.path.basename(src))[0] + ".exe"
     
-    cmd = "g++ -Wall -c %s -o %s"%(src, dest_obj)
+    cmd = "g++ -O0 -g -Wall -c %s -o %s"%(src, dest_obj)
     print(cmd)
     ret = os.system(cmd)
 
