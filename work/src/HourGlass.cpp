@@ -37,23 +37,31 @@ class HourGlass {
   vector <int> measurable(int glass1, int glass2) {
     // -- main code --
 
-    int mg = max(glass1, glass2);
-    vector< int > m(mg*10+1,0);
-    vector< int > g(mg*10+1,0);
+    int minglass = min(glass1, glass2);
+    int maxglass = max(glass1, glass2);
+    vector< vector< vector<int> > > dp(
+        minglass*10+1+maxglass, vector< vector<int> >(glass2+1, vector<int>(glass1+1, 0)));
 
-    UPTO(i, 1, 10) {
-      m[glass1*i] = abs(glass2-glass1);
-      g[glass1*i] = 1;
-      m[glass2*i] = abs(glass2-glass1);
-      g[glass1*i] = 2;
-    }
-
-    TIMES(i, m.size()) {
-      if(m[i] != 0) {
-        m[i + m[i]] = 
+    dp[glass1][0][0] = 1;
+    dp[glass2][0][0] = 1;
+    dp[glass1][abs(glass2-glass1)][0] = 1;
+    dp[glass2][0][abs(glass2-glass1)] = 1;
+    
+    TIMES(z, dp.size()-mg) {
+      TIMES(x, dp[z][y].size()) {
+        if(dp[z][0][x] == 1) {
+          if(x == 0) {
+            dp[z+glass1][0][0] = 1;
+            dp[z+glass2][0][0] = 1;
+            dp[z+glass1][abs(glass2-glass1)][0] = 1;
+            dp[z+glass2][0][abs(glass2-glass1)] = 1;
+          }else {
+            dp[z+x][0][0] = 1;
+            dp[z+x][glass2-x][0] = 1;
+          }
+        }
       }
     }
-
     vector<int> r;
 
     TIMES(i, 10) {
