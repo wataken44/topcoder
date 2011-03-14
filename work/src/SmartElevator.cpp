@@ -37,53 +37,42 @@ class SmartElevator {
   int timeWaiting(vector <int> arrivalTime, vector <int> startingFloor, vector <int> destinationFloor) {
     // -- main code --
     int sz = arrivalTime.size();
-    TIMES(y, sz-1) {
-      FOR(x, y+1, sz) {
-        if(arrivalTime[y] < arrivalTime[x]) {
-          swap(arrivalTime[y], arrivalTime[x]);
-          swap(startingFloor[y], startingFloor[x]);
-          swap(destinationFloor[y], destinationFloor[x]);
+    vector<int> b(sz*2, 0);
+
+    TIMES(i, b.size()) {
+      b[i] = i / 2;
+    }
+
+    int best = 0;
+    TIMES(i, sz) {
+      best += arrivalTime[i] + startingFloor[i] + destinationFloor[i]; 
+    }
+    
+    do {
+      vector<bool> state(sz, false);
+
+      int t = 0;
+      int pos = 1;
+
+      TIMES(k, b.size()) {
+        int p = b[k];
+        if(state[p]) {
+          t += abs(destinationFloor[p] - pos);
+          pos = destinationFloor[p];
+        }else {
+          if(arrivalTime[p] > t + abs(startingFloor[p] - pos)) {
+            t = arrivalTime[p];
+          }else {
+            t += abs(startingFloor[p] - pos);
+          }
+          pos = startingFloor[p];
+          state[p] = true;
         }
       }
-    }
+      best = min(best, t);
+    }while(next_permutation(b.begin(), b.end()));
 
-    vector<int> floors;
-    
-    TIMES(y, sz) {
-      int f = startingFloor[y];
-      vector<int>::iterator it = find(floors.begin(), floors.end(), f);
-      if(it == floors.end()) floors.push_back(f);
-
-      f = destinationFloor[y];
-      it = find(floors.begin(), floors.end(), f);
-      if(it == floors.end()) floors.push_back(f);
-      
-    }
-    sort(floors.begin(), floors.end());
-    
-    vector< map<int, int> > dp(sz);
-
-    TIMES(y, sz) {
-      TIMES(x, floors.size()) {
-        int f = floors[x];
-        dp[y][f] = max(arrivalTime[y], startingFloor[y]-1) + abs(startingFloor[y] - f);
-      }
-
-    }
-
-    FOR(y, 1, sz) {
-      int prevDestArriveTime = dp[y-1][destinationFloor[y-1]];
-      int prevDestToCurDestTime = abs(destinationFloor[y] - destinationFloor[y-1]);
-      if(prevDestArriveTime + prevDestToCurDestTime > arrivalTime[y]) {
-        TIMES(x, floors.size()) {
-          int f = floors[x];
-          dp[y][f] += prevDestToCurDestTime;
-          dp[y][f] += abs(f - destinationFloor[y]);
-        }
-      }
-    }
-    
-    return dp[sz-1][destinationFloor[sz-1]];
+    return best;
   }
 
 // BEGIN CUT HERE
