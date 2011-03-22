@@ -1,5 +1,5 @@
 #TopCoder ContestApplet Preferences File
-#Tue Mar 22 11:10:20 JST 2011
+#Tue Mar 22 13:42:55 JST 2011
 com.topcoder.client.contestApplet.common.LocalPreferences.menufont=Arial
 com.topcoder.client.contestApplet.common.LocalPreferences.menufontsize=10
 com.topcoder.client.contestApplet.common.LocalPreferences.commonclasspath=/Users/wataken44/Documents/topcoder/bin/TZTester.jar\:/Users/wataken44/Documents/topcoder/bin/FileEdit.jar\:/Users/wataken44/Documents/topcoder/bin/CodeProcessor.jar
@@ -163,7 +163,7 @@ com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatSpeakerBack=-167
 com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatQuestionBack=-16777216
 com.topcoder.jmaContestApplet.frames.codingframe.location=141\:527
 com.topcoder.jmaContestApplet.frames.codingframe.size=719\:474
-com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=146
+com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=114
 fileeditor.config.dirName=/Users/wataken44/Documents/topcoder/work/src
 fileeditor.config.fileName=problem
 fileeditor.config.beginCut=// BEGIN CUT HERE
