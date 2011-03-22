@@ -29,24 +29,28 @@ typedef int int_type;
 #define STEP(x, a, b, s) for(int_type x = static_cast<int_type>(a); s > 0 ? x <= static_cast<int_type>(b) : x >= static_cast<int_type>(b); x += static_cast<int_type>(s) )
 #define UPTO(x, a, b) for(int_type x = static_cast<int_type>(a); x <= static_cast<int_type>(b); ++x)
 #define DOWNTO(x, a, b) for(int_type x = static_cast<int_type>(a); x >= static_cast<int_type>(b); --x)
+// debug
+#define DUMP(x) std::cout << #x << " = " << x << std::endl;
 
 using namespace std;
 
 class $CLASSNAME$ {
-$BEGINCUT$
-/*
-$PROBLEMDESC$
-*/
-$ENDCUT$
 
  public:
-  $RC$ $METHODNAME$($METHODPARMS$) {
+  $RC$ $METHODNAME$($METHODPARMS$)
+  {
     $RC$ result;
     // -- main code --
     
     return result;	
   }
 
+$BEGINCUT$
+/*
+$PROBLEMDESC$
+*/
+$ENDCUT$
+  
   $TESTCODE$
 };
 
