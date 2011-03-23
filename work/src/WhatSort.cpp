@@ -57,7 +57,7 @@ class WhatSort {
 
     bool naw = true;
     TIMES(i, sz - 1) {
-      if(name[i] < name[i+1] or (name[i] == name[i+1] and age[i] < age[i+1]) or (name[i] == name[i+1] and age[i] == age[i+1] and wt[i] < wt[i+1]) ) {
+      if(name[i] < name[i+1] or (name[i] == name[i+1] and age[i] <= age[i+1])) {
       }else {
         naw = false;
         break;
@@ -73,7 +73,7 @@ class WhatSort {
     
     bool nwa = true;
     TIMES(i, sz - 1) {
-      if(name[i] < name[i+1] or (name[i] == name[i+1] and wt[i] < wt[i+1]) or (name[i] == name[i+1] and wt[i] == wt[i+1] and age[i] < age[i+1]) ) {
+      if(name[i] < name[i+1] or (name[i] == name[i+1] and wt[i] >= wt[i+1])) {
       }else {
         nwa = false;
         break;
@@ -89,7 +89,7 @@ class WhatSort {
 
     bool anw = true;
     TIMES(i, sz - 1) {
-      if(age[i] < age[i+1] or (age[i] == age[i+1] and name[i] < name[i+1]) or (age[i] == age[i+1] and name[i] == name[i+1] and wt[i] < wt[i+1]) ) {
+      if(age[i] < age[i+1] or (age[i] == age[i+1] and name[i] <= name[i+1])) {
       }else {
         anw = false;
         break;
@@ -105,7 +105,7 @@ class WhatSort {
 
     bool awn = true;
     TIMES(i, sz - 1) {
-      if(age[i] < age[i+1] or (age[i] == age[i+1] and wt[i] < wt[i+1]) or (age[i] == age[i+1] and wt[i] == wt[i+1] and name[i] < name[i+1]) ) {
+      if(age[i] < age[i+1] or (age[i] == age[i+1] and wt[i] >= wt[i+1])) {
       }else {
         awn = false;
         break;
@@ -121,7 +121,7 @@ class WhatSort {
 
     bool wan = true;
     TIMES(i, sz - 1) {
-      if(wt[i] < wt[i+1] or (wt[i] == wt[i+1] and age[i] < age[i+1]) or (wt[i] == wt[i+1] and age[i] == age[i+1] and name[i] < name[i+1]) ) {
+      if(wt[i] > wt[i+1] or (wt[i] == wt[i+1] and age[i] <= age[i+1])) {
       }else {
         wan = false;
         break;
@@ -137,7 +137,7 @@ class WhatSort {
 
     bool wna = true;
     TIMES(i, sz - 1) {
-      if(wt[i] < wt[i+1] or (wt[i] == wt[i+1] and name[i] < name[i+1]) or (wt[i] == wt[i+1] and name[i] == name[i+1] and age[i] < age[i+1]) ) {
+      if(wt[i] > wt[i+1] or (wt[i] == wt[i+1] and name[i] <= name[i+1])) {
       }else {
         wna = false;
         break;
