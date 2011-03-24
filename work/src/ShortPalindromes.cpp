@@ -36,60 +36,35 @@ using namespace std;
 
 class ShortPalindromes {
  public:
+  vector< vector<string> > memo;
+  vector< vector<bool> > found;
+
   string shortest(string base) {
     // -- main code --
+    int sz = base.size();
 
-    if((int)base.size() <= 1) return base;
+    if(sz <= 1) return base;
     
-    string f = base.substr(0, 1);
-    int bl = base.size() - 1;
+    memo = vector< vector<string> >(sz, vector<string>(sz, ""));
+    found = vector< vector<bool> >(sz, vector<bool>(sz, false));
     
-    string r = base.substr(1, bl);
-
-    if(f[0] > base[bl]) {
-      f = base.substr(bl, 1);
-      r = base.substr(0, bl);
-    }else if(f[0] == base[bl]) {
-      r = min(base.substr(0, bl), base.substr(1, bl));
-    }
-
-    if(r[0] > r[r.size() - 1]) {
-      reverse(r.begin(), r.end());
-    }
-
-    string t = r;
-    reverse(t.begin(), t.end());
-
-    /*
-    DUMP(f); DUMP(r);
-    cout.flush();
-    r: a b d  c f de
-    t:    edf c   d b a
-    */
-    
-    
-    return "-";	
   }
 
-  bool go(string& src, int pos, int len, string& ret) {
-    DOWNTO(j, r.size(), 1) {
-      string result = "-";
-
-      TIMES(i, r.size() - j) {
-        if(r[0] == r[r.size() - 1]) {
-          if(result == "-") {
-            result = "";
-          }else {
-
-          }
-        }
-      }
-
-      if(result != "-") {
-        return result;
-      }
+  string go(string& base, int pos, int len) {
+    if(found[pos][len] == true) {
+      return memo[pos][len];
     }
 
+    if(isPalindrome(base)) {
+      found[pos][len] = true;
+      memo[pos][len] = base;
+      return base;
+    }else if(base[0] == base[base.size() - 1]) {
+
+    }else {
+      
+    }
+    
   }
   
   bool isPalindrome(string& s) {
