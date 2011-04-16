@@ -39,38 +39,32 @@ class FoxPlayingGame {
   double theMax(int nA, int nB, int paramA, int paramB) {
     // -- main code --
 
-    double a = (double)nA * (double)paramA / 1000.0; 
-    //DUMP(a);
-    if(paramA < 0) {
-      if(-1000 > paramB or paramB > 1000) {
-        return a;
-      }
+    vector< vector< double > > dp(nB+1, vector<double>(nA+1, -100000.0));
+    double sA = paramA / 1000.0;
+    double sB = paramB / 1000.0;
 
-      if(paramB < -1000) {
-        if(nB % 2 == 1) --nB;
-      }
-    
-      TIMES(i, nB) {
-        a = a * ((double)paramB / 1000.0);
-      }
-      return a;
-    }
-
-    // paramA > 0;
-    if(-1000<= paramB and paramB <= 1000) {
-      return a;
-    }
-
-    if(paramB < -1000) {
-      if(nB % 2 == 1) --nB;
+    UPTO(a, 0, nA) {
+      dp[0][a] = a * sA;
     }
     
-    TIMES(i, nB) {
-      a = a * ((double)paramB / 1000.0);
+    UPTO(b, 1, nB) {
+      UPTO(a, 1, nA) {
+        dp[b][a] = max(dp[b][a], dp[b][a - 1] + sA);
+        UPTO(bb, 0, b) {
+          dp[b][a] = max(dp[b][a], dp[0][a] * pow(sB, bb));
+        }
+      }
     }
 
-    //cout.flush();
-    return a;
+    UPTO(b, 0, nB) {
+      UPTO(a, 0, nA) {
+        cerr << dp[b][a] << " " ;
+      }
+      cerr << endl;
+    }
+    cerr << endl;
+
+    return dp[nB][nA];
   }
 
 // BEGIN CUT HERE
