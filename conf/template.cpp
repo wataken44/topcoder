@@ -46,6 +46,9 @@ class $CLASSNAME$ {
   }
 
 $BEGINCUT$
+  void debug()
+  {
+  }
 /*
 $PROBLEMDESC$
 */
@@ -56,10 +59,21 @@ $ENDCUT$
 
 $BEGINCUT$
 
-int main()
+int main(int argc, char *argv[])
 {
+  
   $CLASSNAME$ test;
-  test.run_test(-1);
+
+  if(argc == 1) {
+    test.run_test(-1);
+  }else {
+    std::string arg(argv[1]);
+    if(arg[0] != '-') {
+      test.run_test(arg[0] - '0');
+    }else {
+      test.debug();
+    }
+  }
   
   return 0;
 }
