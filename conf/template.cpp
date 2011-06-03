@@ -30,7 +30,7 @@ typedef int int_type;
 #define UPTO(x, a, b) for(int_type x = static_cast<int_type>(a); x <= static_cast<int_type>(b); ++x)
 #define DOWNTO(x, a, b) for(int_type x = static_cast<int_type>(a); x >= static_cast<int_type>(b); --x)
 // debug
-#define DUMP(x) std::cout << #x << " = " << x << std::endl;
+#define DUMP(x) std::cerr << #x << " = " << x << std::endl;
 
 using namespace std;
 
