@@ -51,30 +51,20 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class ColorfulRabbits {
+class WhiteSpaceEditing {
 
  public:
-  int getMinimum(vector <int> replies)
+  int getMinimum(vector <int> lines)
   {
+    int result = 0;
     // -- main code --
 
-    map<int, int> group;
+    sort(lines.begin(), lines.end());
 
-    TIMES(i, replies.size()) {
-      int g = replies[i];
-      if(group.find(g) != group.end()) {
-        ++group[g];
-      }else {
-        group[g] = 1;
-      }
-    }
-
-    int result = 0;
-    EACH(group, it) {
-      int size = it->first + 1;
-      int count = it->second;
-
-      result += size * static_cast<int>(ceil(count * 1.0 / size));
+    result += lines[0];
+    FOR(i, 1, lines.size()) {
+      result += lines[i] - lines[i - 1];
+      ++result; // RET
     }
     
     return result;	
@@ -86,51 +76,99 @@ class ColorfulRabbits {
   }
 /*
 // PROBLEM STATEMENT
-// Cat Pochi visited a town of rabbits and asked some of the rabbits the following question: 
-"How many rabbits in this town other than yourself have the same color as you?". 
-The rabbits all replied truthfully, and no rabbit was asked the question more than once. 
-You are given the rabbits' replies in the vector <int> replies. 
-Return the minimum possible number of rabbits in this town. 
+// You want to type a document containing only spaces and new lines. 
+Let SP and NL denote a space character and a new line character, respectively. 
+You are given a vector <int> lines describing the desired document. 
+The elements of lines represent the number of SP characters in each line, 
+in order. 
+Each line must end with a NL character. 
+In other words, the document should look like this: 
+lines[0] SP characters, followed by a NL, 
+followed by lines[1] SP characters, followed by a NL, 
+..., lines[N-1] SP characters, followed by a NL 
+(where N is the number of elements in lines).
+
+
+The editor has a cursor, which can be positioned 
+between two adjacent characters or at the beginning or end of the document. 
+You can move this cursor freely.
+
+
+The editor has three special keys: 
+
+	
+		SPACE: inserts a SP at the position of the cursor. 
+	
+	
+		DELETE: deletes a SP character immediately to the right of the cursor. 
+		This key cannot be used if the character to the right of the cursor is a NL.
+	
+	
+		RETURN: inserts a NL followed by some number of SP characters. 
+		This key can only be used when the character 
+		immediately to the right of the cursor is a NL. 
+		The number of SP characters that get inserted 
+		is equal to the number of SP characters in the line where the cursor is. 
+		For example, if the document is "SP NL SP SP NL SP SP SP NL", 
+		and the cursor is immediately to the left of the second NL, 
+		it will become "SP NL SP SP NL SP SP NL SP SP SP NL" after pressing RETURN. 
+	
+
+The document initially contains nothing but a single NL character. 
+Return the minimum number of times 
+you must press SPACE, DELETE or RETURN to complete the document.
 
 
 DEFINITION
-Class:ColorfulRabbits
+Class:WhiteSpaceEditing
 Method:getMinimum
 Parameters:vector <int>
 Returns:int
-Method signature:int getMinimum(vector <int> replies)
+Method signature:int getMinimum(vector <int> lines)
 
 
 CONSTRAINTS
--replies will contain between 1 and 50 elements, inclusive. 
--Each element of replies will be between 0 and 1,000,000, inclusive. 
+-lines will contain between 1 and 50 elements, inclusive. 
+-Each element of lines will be between 0 and 1,000,000, inclusive. 
 
 
 EXAMPLES
 
 0)
-{ 1, 1, 2, 2 }
+{ 3, 2, 3 }
 
+Returns: 6
 
-Returns: 5
+You can edit the document as follows: 
 
-If there are 2 rabbits with a color and 3 rabbits with another color, 
-Pochi can get this set of replies. 
-
+	NL
+	SP NL
+	SP SP NL
+	SP SP SP NL
+	SP SP SP NL SP SP SP NL
+	SP SP SP NL SP SP SP NL SP SP SP NL
+	SP SP SP NL SP SP NL SP SP SP NL
 
 
 
 1)
 { 0 }
 
+Returns: 0
 
-Returns: 1
-
-A poor lonely rabbit. 
+You have to do nothing. 
 
 
 2)
-{ 2, 2, 44, 2, 2, 2, 444, 2, 2 }
+{ 1, 2, 4 }
+
+
+Returns: 6
+
+
+
+3)
+{ 250, 105, 155, 205, 350 }
 
 
 Returns: 499
@@ -143,16 +181,16 @@ Returns: 499
   
 // BEGIN CUT HERE
 	public:
-	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); }
+	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
 	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { int Arr0[] = { 1, 1, 2, 2 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 5; verify_case(0, Arg1, getMinimum(Arg0)); }
-	void test_case_1() { int Arr0[] = { 0 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 1; verify_case(1, Arg1, getMinimum(Arg0)); }
-	void test_case_2() { int Arr0[] = { 2, 2, 44, 2, 2, 2, 444, 2, 2 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 499; verify_case(2, Arg1, getMinimum(Arg0)); }
+	void test_case_0() { int Arr0[] = { 3, 2, 3 }; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 6; verify_case(0, Arg1, getMinimum(Arg0)); }
+	void test_case_1() { int Arr0[] = { 0 }; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 0; verify_case(1, Arg1, getMinimum(Arg0)); }
+	void test_case_2() { int Arr0[] = { 1, 2, 4 }
+; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 6; verify_case(2, Arg1, getMinimum(Arg0)); }
+	void test_case_3() { int Arr0[] = { 250, 105, 155, 205, 350 }
+; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 499; verify_case(3, Arg1, getMinimum(Arg0)); }
 
 // END CUT HERE
 
@@ -163,7 +201,7 @@ Returns: 499
 int main(int argc, char *argv[])
 {
   
-  ColorfulRabbits test;
+  WhiteSpaceEditing test;
 
   if(argc == 1) {
     test.run_test(-1);
