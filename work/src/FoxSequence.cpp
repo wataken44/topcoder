@@ -1,128 +1,129 @@
+#include <algorithm>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <complex>
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
-#include <climits>
-#include <cfloat>
-#include <map>
-#include <utility>
-#include <set>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <vector>
-#include <list>
-#include <algorithm>
 #include <functional>
-#include <sstream>
-#include <complex>
-#include <stack>
+#include <iostream>
+#include <list>
+#include <map>
+#include <memory>
 #include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <utility>
+#include <vector>
 
 typedef int int_type;
 
 // -- utility --
 // C-style loop
 #define FOR(x, a, b) for(int_type x = static_cast<int_type>(a); x < static_cast<int_type>(b); ++x)
-#define FORN(x, n) FOR(x, 0, n)
 // Ruby-style loop
 #define TIMES(x, n) FOR(x, 0, n)
 #define STEP(x, a, b, s) for(int_type x = static_cast<int_type>(a); s > 0 ? x <= static_cast<int_type>(b) : x >= static_cast<int_type>(b); x += static_cast<int_type>(s) )
 #define UPTO(x, a, b) for(int_type x = static_cast<int_type>(a); x <= static_cast<int_type>(b); ++x)
 #define DOWNTO(x, a, b) for(int_type x = static_cast<int_type>(a); x >= static_cast<int_type>(b); --x)
-// debug
-#define DUMP(x) std::cerr << #x << " = " << x << std::endl;
+#define EACH(c, i) for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); ++i)
+#define ALL(cont, it, cond, ret) \
+  bool ret = true; EACH(cont, it) { if(!(cond)) {ret=false;break;} }
+#define ANY(cont, it, cond, ret) \
+  bool ret = false; EACH(cont, it) { if(cond) {ret=true;break;} }
 
 using namespace std;
+// debug
+// BEGIN CUT HERE
+#define DUMP(x) std::cerr << #x << " = " << to_s(x) << std::endl;
+template<typename T> string to_s(const T& v);
+template<> string to_s(const string& v);
+template<> string to_s(const bool& v);
+template<typename T> string to_s(const vector<T>& v);
+template<typename T> string to_s(const list<T>& v);
+template<typename T> string to_s(const set<T>& v);
+template<typename F, typename S> string to_s(const pair<F,S>& v);
+template<typename K, typename V> string to_s(const map<K,V>& v);
+// END CUT HERE
+#ifndef DUMP
+#define DUMP(x) 
+#endif
 
 class FoxSequence {
+
  public:
-  string isValid(vector <int> seq) {
+  string isValid(vector <int> seq)
+  {
     // -- main code --
 
-    int n = seq.size();
-
-    int cda = seq[1] - seq[0];
-    if(not cda > 0) return "NO";
+    int sz = seq.size();
+    if(seq.size() == 1) return "NO";
     
-    FOR(a, 1, n - 1) {
-      bool valid_a = (a >= 1);
-      UPTO(aa, 1, a) {
-        if(seq[aa] - seq[aa-1] != cda) {
-          valid_a = false;
-          break;
-        }
+
+    int ptr = 0;
+
+    {
+      int d = seq[ptr + 1] - seq[ptr];
+      if(d <= 0) return "NO";
+
+      while(ptr + 1 < sz) {
+        if(seq[ptr + 1] - seq[ptr] != d) break;
+        ++ptr;
       }
-      if(not valid_a) continue;
-      //DUMP(a);
-      //DUMP(seq[a]);
-      
-      FOR(b, a + 1, n - 1) {
-        int cdb = seq[a+1] - seq[a];
-        if(not cdb < 0) break;
 
-        bool valid_b = (b > a + 1);
-        UPTO(bb, a + 1, b) {
-          if(seq[bb] - seq[bb-1] != cdb) {
-            valid_b = false;
-            break;
-          }
+      if(ptr == sz - 1) return "NO";
+    }
+    {
+      int d = seq[ptr + 1] - seq[ptr];
+      if(d >= 0) return "NO";
+
+      while(ptr + 1 < sz) {
+        if(seq[ptr + 1] - seq[ptr] != d) break;
+        ++ptr;
+      }
+      if(ptr == sz - 1) return "NO";
+    }
+    {
+      int d = seq[ptr + 1] - seq[ptr];
+      // if(d != 0) return "NO";
+      if(d == 0) {
+        while(ptr + 1 < sz) {
+          if(seq[ptr + 1] - seq[ptr] != d) break;
+          ++ptr;
         }
-        if(not valid_b) continue;
-        //DUMP(b);
-        //DUMP(seq[b]);
-        
-        FOR(c, b, n - 1) {
-          bool valid_c = true;
-          UPTO(cc, b, c) {
-            if(seq[cc] != seq[b]) {
-              valid_c = false;
-              break;
-            }
-          }
-          if(not valid_c) continue;
-          //DUMP(c);
-          //DUMP(seq[c]);
-          
-          FOR(d, c + 1, n - 1) {
-            int cdd = seq[c+1] - seq[c];
-            if(not cdd > 0) break;
-            
-            bool valid_d = (d > c + 1);
-            UPTO(dd, c + 1, d) {
-              if(seq[dd] - seq[dd-1] != cdd) {
-                valid_d = false;
-                break;
-              }
-            }
-            if(not valid_d) continue;
-
-            int cde = seq[d+1] - seq[d];
-            if(not cde < 0) break;
-
-            //DUMP(d);
-            //DUMP(seq[d]); 
-            //DUMP(cde);
-            
-            bool valid_e = (n - 1 > d + 1);
-            UPTO(ee, d + 1, n - 1) {
-              if(seq[ee] - seq[ee-1] != cde) {
-                valid_e = false;
-                break;
-              }
-            }
-            if(not valid_e) continue;
-            //DUMP(d);
-            
-            return "YES";
-          }
-        }
+        if(ptr == sz - 1) return "NO";
       }
     }
-    
-    return "NO";	
+    {
+      int d = seq[ptr + 1] - seq[ptr];
+      if(d <= 0) return "NO";
+
+      while(ptr + 1 < sz) {
+        if(seq[ptr + 1] - seq[ptr] != d) break;
+        ++ptr;
+      }
+      if(ptr == sz - 1) return "NO";
+    }
+    {
+      int d = seq[ptr + 1] - seq[ptr];
+      if(d >= 0) return "NO";
+
+      while(ptr + 1 < sz) {
+        if(seq[ptr + 1] - seq[ptr] != d) break;
+        ++ptr;
+      }
+      // if(ptr == sz - 1) return "NO";
+    }
+
+    return ptr == sz - 1 ? "YES" : "NO";	
   }
 
 // BEGIN CUT HERE
+  void debug()
+  {
+  }
 /*
 // PROBLEM STATEMENT
 // Fox Ciel likes sequences.  One day, she invented a new type of sequence and named it the fox sequence.  A sequence seq containing N elements is called a fox sequence if and only if there exist four integers a, b, c and d such that 0 < a < b <= c < d < N-1 and the following five conditions are met:
@@ -205,7 +206,7 @@ Returns: "NO"
 
 */
 // END CUT HERE
-
+  
   
 // BEGIN CUT HERE
 	public:
@@ -232,12 +233,32 @@ Returns: "NO"
 
 // BEGIN CUT HERE
 
-int main()
+int main(int argc, char *argv[])
 {
+  
   FoxSequence test;
-  test.run_test(-1);
+
+  if(argc == 1) {
+    test.run_test(-1);
+  }else {
+    std::string arg(argv[1]);
+    if(arg[0] != '-') {
+      test.run_test(arg[0] - '0');
+    }else {
+      test.debug();
+    }
+  }
   
   return 0;
 }
+
+template<typename T> string to_s(const T& v) { ostringstream oss; oss << v; return oss.str(); }
+template<> string to_s(const string& v) { ostringstream oss; oss << '"' << v << '"'; return oss.str(); }
+template<> string to_s(const bool& v) { ostringstream oss; oss << ( v ? "true" : "false") ; return oss.str(); } 
+template<typename T> string to_s(const vector<T>& v) { ostringstream oss; oss << "["; EACH(v,i) oss << to_s(*i) << ","; oss << "]"; return oss.str(); }
+template<typename T> string to_s(const list<T>& v) { ostringstream oss; oss << "("; EACH(v,i) oss << to_s(*i) << ","; oss << ")"; return oss.str(); }
+template<typename T> string to_s(const set<T>& v) { ostringstream oss; oss << "{"; EACH(v,i) oss << to_s(*i) << ","; oss << "}"; return oss.str(); }
+template<typename F, typename S> string to_s(const pair<F,S>& v) { ostringstream oss; oss << "<" << to_s(v.first) << " " << to_s(v.second) << ">"; return oss.str(); }
+template<typename K, typename V> string to_s(const map<K,V>& v) { ostringstream oss; oss << "{"; EACH(v,i) oss << to_s(i->first) << " => " << to_s(i->second) << ","; oss << "}"; return oss.str(); }
 
 // END CUT HERE
