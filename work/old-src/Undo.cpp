@@ -54,58 +54,48 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 class Undo {
 
  public:
-  vector<bool> m_enable;
-  vector<string> m_typed;
-  vector<int> m_time;
-  vector<int> m_undo;
-  
   string getText(vector <string> commands, vector <int> time)
   {
-    // -- main code --
-
-    m_enable = vector<bool>(commands.size(), true);
-    m_typed = vector<string>(commands.size(), "");
-    m_time = time;
-    m_undo = vector<int>(commands.size(), 0);
+    int sz = commands.size();
+    DUMP(sz);
     
-    TIMES(i, commands.size()) {
-      istringstream iss(commands[i]);
+    vector<bool> enable(sz, true);
 
-      string s;
-      iss >> s;
-      if(s == "type") {
-        iss >> s;
-        m_typed[i] = s;
-      }else {
-        int t = 0;
-        iss >> t;
-        m_undo[i] = t;
-        undo(t, i);
-      }
-    }
-
-    string result = "";
-    TIMES(i, m_typed.size()) {
-      if(m_enable[i]) result += m_typed[i];
-    }
-
-    DUMP(m_enable);
-    DUMP(m_typed);
-    
-    return result;
-  }
-
-  void undo(int t, int k)
-  {
-    DOWNTO(j, k - 1, 0) {
-      if(m_time[k] - m_time[j] > t) break;
-      m_enable[j] = not m_enable[j];
-      if(m_typed[j] == "") {
-        undo(m_undo[j], j);
-      }
-    }
-  }
+    string result;
   
+    DOWNTO(i, sz-1, 0) {
+      if(!enable[i]) continue;
+      istringstream iss(commands[i]);
+      string c, s;
+      iss >> c >> s;
+
+      //DUMP(c); DUMP(s);
+      
+      if(c == "undo") {
+        int now = time[i];
+        istringstream isss(s);
+        int off;
+        isss >> off;
+
+        DUMP(off);
+        
+        DOWNTO(k, i-1, 0) {
+          int prev = time[k];
+          if(prev >= now - off) {
+            enable[k] = false;
+          }
+        }
+      }else {
+        result = s + result;
+      }
+    }
+
+
+    // -- main code --
+    
+    return result;	
+  }
+
 // BEGIN CUT HERE
   void debug()
   {

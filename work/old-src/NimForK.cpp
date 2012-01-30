@@ -53,31 +53,137 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 
 class NimForK {
 
+  int m_n;
+  int m_k;
+  vector< vector<int> > m_mv;
+
+  vector< int > m_canWin;
+  vector< vector<int> > m_canMakeNotWin;
+  
  public:
   vector <int> winners(int n, int k, vector <string> moves)
   {
-    vector <int> result;
-    // -- main code --
+    m_mv.clear();    
+    m_mv = vector< vector<int> >(n + 1);
 
-    int sz = n + 1;
-    vector< vector<int> > graph(sz, vector<int>(sz, 0));
+    m_canWin.clear();
+    m_canWin = vector<int>(n + 1, -1);
 
-    TIMES(i, moves.size()) {
-      int ii = i + 1;
+    m_canMakeNotWin.clear();
+    m_canMakeNotWin = vector< vector<int> >(k, vector<int>(n + 1, -1));
+    
+    m_n = n;
+    m_k = k;
+    
+    TIMES(i, n) {
       istringstream iss(moves[i]);
 
-      while(iss.eof() == false) {
-        int m = 0;
+      while(!iss.eof()) {
+        int m;
         iss >> m;
-        graph[ii][ii - m] = 1;
+        m_mv[i+1].push_back(m);
+      }
+      sort(m_mv[i+1].begin(), m_mv[i+1].end());
+    }
+
+
+    vector< set<int> > winPrb(n + 1);
+
+    UPTO(i, 1, n) {
+      if(canWin(i)) {
+        winPrb[i].insert(0);
+      }else {
+        TIMES(a, m_mv[i].size()) {
+          int x = m_mv[i][a];
+          if(i - x > 0) {
+            
+          }
+        }
       }
     }
 
-    DUMP(graph);
+    vector<int> result(winPrb[n].begin(), winPrb[n].end());
     
     return result;	
   }
 
+  void rightShift(const set<int>& src, set<int>& dest)
+  {
+    EACH(src, it) {
+      dest.insert( ((*it) + 1) % m_k );
+    }
+  }
+
+  bool canWin(int i)
+  {
+    if(m_canWin[i] != -1) {
+      return m_canWin[i] == 1;
+    }
+
+    TIMES(a, m_mv[i].size()) {
+      if(m_mv[i][a] == i) {
+        m_canWin[i] = 1;
+        return true;
+      }
+    }
+
+    TIMES(b, m_mv[i].size()) {
+      int x = m_mv[i][b];
+      if(x < i && canMakeNotWin(1, i - x) == false) {
+        m_canWin[i] = 1;
+        return true;
+      }
+    }
+
+    m_canWin[i] = 0;
+    return false;
+  }
+
+  bool canMakeNotWin(int i, int j)
+  {
+    if(m_canMakeNotWin[i][j] != -1) {
+      return m_canMakeNotWin[i][j] == 1;
+    }
+
+    // cannot move any more
+    if(m_mv[j].size() == 0) {
+      m_canMakeNotWin[i][j] = 1;
+      return true;
+    }
+    // player i win
+    TIMES(a, m_mv[j].size()) {
+      if(m_mv[j][a] == j) {
+        m_canMakeNotWin[i][j] = 1;
+        return true;
+      }
+    }
+
+    if(i != m_k - 1) {
+      // player j ... k-1 win
+      TIMES(b, m_mv[j].size()) {
+        int x = m_mv[j][b];
+        if(x < j && canMakeNotWin(i + 1, j - x) == false) {
+          m_canMakeNotWin[i][j] = 1;
+          return true;
+        }
+      }
+      
+    }else {
+      // player 0 cannot win
+      TIMES(b, m_mv[j].size()) {
+        int x = m_mv[j][b];
+        if(x < j && canWin(j - x) == false) {
+          m_canMakeNotWin[i][j] = 1;
+          return true;
+        }
+      }
+      
+    }
+
+    m_canMakeNotWin[i][j] = 0;
+    return false;
+  }
+  
 // BEGIN CUT HERE
   void debug()
   {

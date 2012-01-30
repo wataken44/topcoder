@@ -58,6 +58,62 @@ class InternetSecurity {
   {
     vector <string> result;
     // -- main code --
+
+    int sz = address.size();
+
+    set<string> blacklist;
+    FOR(k, 0, dangerous.size()) {
+      blacklist.insert(dangerous[k]);
+    }
+
+    vector< vector<string> > word(sz);
+    FOR(i, 0, sz) {
+      istringstream iss(keyword[i]);
+      string w;
+      while(!iss.eof()) {
+        iss >> w;
+        word[i].push_back(w);
+      }
+    }
+    
+    vector<bool> marked(sz, false);    
+    while(true) {
+      bool changed = false;
+
+      //DUMP(blacklist);
+      
+      FOR(i, 0, sz) {
+        if(marked[i] == true) continue;
+
+        int count = 0;
+        EACH(blacklist, it) {
+          string w = *it;
+          FOR(m, 0, word[i].size()) {
+            if(w == word[i][m]) {
+              ++count;
+              break;
+            }
+          }
+        }
+        //DUMP(count);
+        if(count >= threshold) {
+          FOR(m, 0, word[i].size()) {
+            blacklist.insert(word[i][m]);
+          }
+          changed = true;
+          marked[i] = true;
+        }
+      }
+      
+      if(!changed) break;
+    }
+
+    //DUMP(marked);
+
+    FOR(i, 0, marked.size()) {
+      if(marked[i]) 
+        result.push_back(address[i]);
+    }
     
     return result;	
   }

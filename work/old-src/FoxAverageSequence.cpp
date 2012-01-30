@@ -1,102 +1,84 @@
+#include <algorithm>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <complex>
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
-#include <climits>
-#include <cfloat>
-#include <map>
-#include <utility>
-#include <set>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <vector>
-#include <list>
-#include <algorithm>
 #include <functional>
-#include <sstream>
-#include <complex>
-#include <stack>
+#include <iostream>
+#include <list>
+#include <map>
+#include <memory>
 #include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <utility>
+#include <vector>
 
 typedef int int_type;
 
 // -- utility --
 // C-style loop
 #define FOR(x, a, b) for(int_type x = static_cast<int_type>(a); x < static_cast<int_type>(b); ++x)
-#define FORN(x, n) FOR(x, 0, n)
 // Ruby-style loop
 #define TIMES(x, n) FOR(x, 0, n)
 #define STEP(x, a, b, s) for(int_type x = static_cast<int_type>(a); s > 0 ? x <= static_cast<int_type>(b) : x >= static_cast<int_type>(b); x += static_cast<int_type>(s) )
 #define UPTO(x, a, b) for(int_type x = static_cast<int_type>(a); x <= static_cast<int_type>(b); ++x)
 #define DOWNTO(x, a, b) for(int_type x = static_cast<int_type>(a); x >= static_cast<int_type>(b); --x)
-// debug
-#define DUMP(x) std::cout << #x << " = " << x << std::endl;
+#define EACH(c, i) for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); ++i)
+#define ALL(cont, it, cond, ret) \
+  bool ret = true; EACH(cont, it) { if(!(cond)) {ret=false;break;} }
+#define ANY(cont, it, cond, ret) \
+  bool ret = false; EACH(cont, it) { if(cond) {ret=true;break;} }
 
 using namespace std;
+// debug
+// BEGIN CUT HERE
+#define DUMP(x) std::cerr << #x << " = " << to_s(x) << std::endl;
+template<typename T> string to_s(const T& v);
+template<> string to_s(const string& v);
+template<> string to_s(const bool& v);
+template<typename T> string to_s(const vector<T>& v);
+template<typename T> string to_s(const list<T>& v);
+template<typename T> string to_s(const set<T>& v);
+template<typename F, typename S> string to_s(const pair<F,S>& v);
+template<typename K, typename V> string to_s(const map<K,V>& v);
+// END CUT HERE
+#ifndef DUMP
+#define DUMP(x) 
+#endif
 
 class FoxAverageSequence {
+
  public:
-  typedef long long  llong ;
-  //vector< vector< vector<llong> > > memo;
+  typedef long long ll;
   
-  int theCount(vector <int> seq) {
+  int theCount(vector <int> seq)
+  {
+    const ll modulo = 1000000007;
+    
     // -- main code --
-    /*
-    memo = vector< vector<vector<llong> > >(
-        seq.size(), vector< vector<llong> >(41, vector<llong>(41, -1)) );
-    */
-    const llong modulo = 1000000007;
+    
+    vector< vector<ll> > dp(seq.size() ,vector<ll>(41, 0));
 
-    int sz = seq.size();
+    FOR(i, 0, seq.size()) {
+      if(seq[i] != -1) {
+        
+      } else {
 
-    vector<int> maxseq(sz);
-
-    TIMES(i, seq.size()) {
-      if(seq[i] == -1) {
-
-        maxseq[i] = 40;
-        double r = 0;
-        if(i >= 1) {
-          TIMES(j, i ) {
-            r += maxseq[j];
-            DUMP(maxseq[j]);
-          }
-          maxseq[i] = (int)floor(r / i);
-        }
-        if(i > 2) {
-          if(maxseq[i-2]>maxseq[i-1] and maxseq[i-1]>maxseq[i]) {
-            return 0;
-          }
-        }
-      }else {
-        maxseq[i] = seq[i];
-        double r = 0;
-        if(i >= 1) {
-          TIMES(j, i) {
-            r += maxseq[j] / (double)i;
-          }
-          if(maxseq[i] > r) {
-            return 0;
-          }
-        }
-        if(i > 2) {
-          if(maxseq[i-2]>maxseq[i-1] and maxseq[i-1]>maxseq[i]) {
-            return 0;
-          }
-        }
       }
-    }
-
-    int result = 1;
-    TIMES(i, sz) {
-      result = result * (maxseq[i] - (seq[i] == -1 ? -1 : seq[i] - 1)) % modulo;
     }
     
     return result;
   }
 
-
 // BEGIN CUT HERE
+  void debug()
+  {
+  }
 /*
 // PROBLEM STATEMENT
 // Fox Ciel likes sequences of integers. She especially likes sequences which she considers to be beautiful. A sequence (A[0], A[1], ..., A[N-1]), N >= 1, is beautiful if and only if it satisfies the following conditions:
@@ -166,7 +148,7 @@ Returns: 58
 
 */
 // END CUT HERE
-
+  
   
 // BEGIN CUT HERE
 	public:
@@ -186,12 +168,32 @@ Returns: 58
 
 // BEGIN CUT HERE
 
-int main()
+int main(int argc, char *argv[])
 {
+  
   FoxAverageSequence test;
-  test.run_test(-1);
+
+  if(argc == 1) {
+    test.run_test(-1);
+  }else {
+    std::string arg(argv[1]);
+    if(arg[0] != '-') {
+      test.run_test(arg[0] - '0');
+    }else {
+      test.debug();
+    }
+  }
   
   return 0;
 }
+
+template<typename T> string to_s(const T& v) { ostringstream oss; oss << v; return oss.str(); }
+template<> string to_s(const string& v) { ostringstream oss; oss << '"' << v << '"'; return oss.str(); }
+template<> string to_s(const bool& v) { ostringstream oss; oss << ( v ? "true" : "false") ; return oss.str(); } 
+template<typename T> string to_s(const vector<T>& v) { ostringstream oss; oss << "["; EACH(v,i) oss << to_s(*i) << ","; oss << "]"; return oss.str(); }
+template<typename T> string to_s(const list<T>& v) { ostringstream oss; oss << "("; EACH(v,i) oss << to_s(*i) << ","; oss << ")"; return oss.str(); }
+template<typename T> string to_s(const set<T>& v) { ostringstream oss; oss << "{"; EACH(v,i) oss << to_s(*i) << ","; oss << "}"; return oss.str(); }
+template<typename F, typename S> string to_s(const pair<F,S>& v) { ostringstream oss; oss << "<" << to_s(v.first) << " " << to_s(v.second) << ">"; return oss.str(); }
+template<typename K, typename V> string to_s(const map<K,V>& v) { ostringstream oss; oss << "{"; EACH(v,i) oss << to_s(i->first) << " => " << to_s(i->second) << ","; oss << "}"; return oss.str(); }
 
 // END CUT HERE
