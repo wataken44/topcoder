@@ -51,62 +51,33 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class GogoXMarisaKirisima {
+class Barracks {
 
  public:
-  int solve(vector <string> choices)
+  int attack(int myUnits, int barHp, int unitsPerRound)
   {
-
-    int sz = choices.size();
-
-    vector< vector<int> > fw(sz, vector<int>(sz, 10000));
-
-    TIMES(y, sz) {
-      TIMES(x, sz) {
-        if(choices[y][x] == 'Y') {
-          fw[y][x] = 1;
-        }
-      }
-    }
-
-    TIMES(z, sz) {
-      TIMES(y,sz) {
-        TIMES(x,sz) {
-          fw[y][x] = min(fw[y][x], fw[y][z] + fw[z][x]);
-        }
-      }
-    }
-
-    TIMES(y, sz) {
-      TIMES(x, sz) {
-        if(fw[y][x] >= 10000 || x == y) {
-          fw[y][x] = 0;
-        }
-      }
-    }
-
-    DUMP(fw);
-
-    if(fw[0][sz - 1] == 0) return 0;
-
-    int r = 2;
-    
-    TIMES(x, sz) {
-      if(x!= 0 && fw[0][x] == 0) continue;
-      if(x!= sz - 1 && fw[x][sz-1] == 0) continue;
-
-      --r;
-      TIMES(y, sz) {
-        if(choices[x][y] == 'Y' && fw[y][sz-1] > 0) ++r;
-      }
-    }
-
-    
-    DUMP(fw);
-    
+    int result = 0;
     // -- main code --
+
+    int hisUnits = 0;
     
-    return r;	
+    while(true) {
+      ++result;
+
+      if(myUnits >= hisUnits) {
+        myUnits -= hisUnits;
+        hisUnits = 0;
+        barHp = max(0, barHp - myUnits);
+      } else {
+        return -1;
+      }
+
+      if(barHp > 0) {
+        hisUnits += unitsPerRound;
+      }
+    }
+    
+    return result;	
   }
 
 // BEGIN CUT HERE
@@ -115,67 +86,86 @@ class GogoXMarisaKirisima {
   }
 /*
 // PROBLEM STATEMENT
-// Like all other software engineers, Gogo likes to "read" virtual novels. In particular, he's currently "reading" a novel titled Touhou, with Marisa Kirisima as its main protagonist. There are N stages in Touhou, numbered 0 through N-1. A playthrough of the novel always starts at the stage 0. The playthrough then may visit some other stages, based on the player's choices (a stage may be visited multiple times). A playthrough is successful if it terminates at the stage N-1.
+// As a serious strategy-games player, you decided to solve one of the most common problems - attacking your
+opponent's building (barracks), which constantly produces new soldiers.
 
-In each stage, Gogo can either finish the playthrough or choose one of the available options that advance Marisa to other stages. You are given a vector <string> choices. If there is a choice that advances Marisa from stage i to stage j, choices[i][j] will be 'Y', otherwise it will be 'N'. For each pair of different stages i, j the game contains at most one such choice. While it may be possible to re-enter the same stage after a sequence of choices is made, there will never be an option that would let Marisa directly stay at the same stage (i.e., a self-loop).
+Before the attack, you've got myUnits soldiers. In a single round, each soldier can either kill one of your opponent's soldiers or inflict 1 hit point of damage to the barracks.
 
-Gogo wants to make as many successful playthroughs as possible, one after another. However, there is an additional constraint: Each playthrough must contain at least one choice Gogo never made in any of the previous playthroughs.
+Your opponent doesn't have any soldiers initially.  However, his barracks has barHp hit points and produces unitsPerRound soldiers per round.
 
-Return the maximum number of successful playthroughs that Gogo can play. If there are no such playthrough, return 0.
+The course of one round:
+1. Each solider from your army either kills one of your opponent's soldiers or inflicts 1 hit point of damage to the barracks.  Each soldier can choose to do something different.  When the barracks loses all of its hit points, it is destroyed. 
+2. Your opponent attacks. He will kill k of your soldiers, where k is the number of remaining soldiers he has.
+3. If the barracks are not yet destroyed, your opponent will produce unitsPerRound new soldiers.
+
+Your task is to destroy the barracks and kill all your opponent's soldiers. If it is possible, return the minimum number of rounds you need to do this.
+Otherwise return -1.
+
+
 
 DEFINITION
-Class:GogoXMarisaKirisima
-Method:solve
-Parameters:vector <string>
+Class:Barracks
+Method:attack
+Parameters:int, int, int
 Returns:int
-Method signature:int solve(vector <string> choices)
+Method signature:int attack(int myUnits, int barHp, int unitsPerRound)
 
 
 CONSTRAINTS
--choices will contain between 2 and 50 elements, inclusive.
--Each element of choices will contain N characters, where N is the number of elements in choices.
--Each character in choices will be either 'Y', or 'N'.
--For each i, choices[i][i] will be 'N'.
+-myUnits, barHp, unitsPerRound will each be between 1 and 5000, inclusive.
 
 
 EXAMPLES
 
 0)
-{"NYN"
-,"YNY"
-,"NNN"}
+10
+11
+15
 
-Returns: 2
+Returns: 4
 
-For example, he can perform the following two playthroughs (in the given order):
-0 -> 1 -> 2
-0 -> 1 -> 0 -> 1 -> 2
-In the first playthrough, both choices (0->1 and 1->2) have never been made before. In the second playthrough, the choice 1->0 has never been made before. Note that the order of playing the playthroughs is important. Should Gogo start by performing the second playthrough, the first playthrough would then be invalid, as it would not contain any new choices.
+Round 1:
+- All your soldiers attack the barracks, leaving it with 1 hit point.
+- Your opponent has no soldiers, so he cannot kill any of your soldiers.
+- Your opponent's army increases from 0 soldiers to 15 soldiers.
+
+Round 2:
+- One of your soldiers destroys the barracks. The other nine kill 9 of your opponent's soldiers.
+- Your opponent has 6 soldiers, so he kills 6 of your soldiers.
+- The barracks have been destroyed, so no new soldiers are produced.
+
+Round 3:
+- You have got 4 soldiers, so you decrease your opponent's army to 2 soldiers.
+- Your opponent kills 2 of your soldiers.
+- The barracks have been destroyed, so no new soldiers are produced.
+
+Round 4:
+- You kill 2 remaining soldiers. 
 
 1)
-{"NNY"
-,"YNY"
-,"YNN"}
+1
+2
+1
 
-Returns: 2
+Returns: -1
 
 
 
 2)
-{"NN"
-,"NN"}
+1
+1
+1
 
-Returns: 0
+Returns: 1
 
 
 
 3)
-{"NYYY"
-,"NNNY"
-,"NNNY"
-,"NNNN"}
+25
+200
+10
 
-Returns: 3
+Returns: 13
 
 
 
@@ -189,18 +179,10 @@ Returns: 3
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
 	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { string Arr0[] = {"NYN"
-,"YNY"
-,"NNN"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 2; verify_case(0, Arg1, solve(Arg0)); }
-	void test_case_1() { string Arr0[] = {"NNY"
-,"YNY"
-,"YNN"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 2; verify_case(1, Arg1, solve(Arg0)); }
-	void test_case_2() { string Arr0[] = {"NN"
-,"NN"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 0; verify_case(2, Arg1, solve(Arg0)); }
-	void test_case_3() { string Arr0[] = {"NYYY"
-,"NNNY"
-,"NNNY"
-,"NNNN"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 3; verify_case(3, Arg1, solve(Arg0)); }
+	void test_case_0() { int Arg0 = 10; int Arg1 = 11; int Arg2 = 15; int Arg3 = 4; verify_case(0, Arg3, attack(Arg0, Arg1, Arg2)); }
+	void test_case_1() { int Arg0 = 1; int Arg1 = 2; int Arg2 = 1; int Arg3 = -1; verify_case(1, Arg3, attack(Arg0, Arg1, Arg2)); }
+	void test_case_2() { int Arg0 = 1; int Arg1 = 1; int Arg2 = 1; int Arg3 = 1; verify_case(2, Arg3, attack(Arg0, Arg1, Arg2)); }
+	void test_case_3() { int Arg0 = 25; int Arg1 = 200; int Arg2 = 10; int Arg3 = 13; verify_case(3, Arg3, attack(Arg0, Arg1, Arg2)); }
 
 // END CUT HERE
 
@@ -211,7 +193,7 @@ Returns: 3
 int main(int argc, char *argv[])
 {
   
-  GogoXMarisaKirisima test;
+  Barracks test;
 
   if(argc == 1) {
     test.run_test(-1);
