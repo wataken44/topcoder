@@ -51,28 +51,13 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class LargestGap {
+class DengklekBuildingRoads {
 
  public:
-  string remove(string& original, int i)
+  int numWays(int N, int M, int K)
   {
-    string r;
-    
-  }
-
-  int getLargest(vector <string> board)
-  {
-    int result = INT_MAX;
+    int result;
     // -- main code --
-
-    string b = "";
-    TIMES(i, board.size()) {
-      b += board[i];
-    }
-
-    TIMES(i, b.size()) {
-      
-    }
     
     return result;	
   }
@@ -83,65 +68,86 @@ class LargestGap {
   }
 /*
 // PROBLEM STATEMENT
-// Given a vector <string> board, concatenate all its elements, in order, to get a single string representing a circular board consisting of uppercase 'X' and '.' characters. "Circular" means that the first and the last characters on the board are consecutive. Maximal consecutive groups of 'X' characters form blocks and maximal consecutive groups of '.' characters form gaps. The size of the gap is the number of '.' characters in it. 
+// Mr. Dengklek lives in the Kingdom of Ducks, where humans and ducks live together in peace and harmony.
 
-You want to remove exactly one block from the board, getting a circular board of smaller size. For each possible block to be removed consider the board after its removal, construct an array of all gaps' sizes on the board and sort this array in non-ascending order. Choose the block for which the described array is lexicographically maximal (see notes for the description of lexicographical array comparison). Return the smallest 0-based index among all characters in this block (indices are taken in the concatenated string). In case of a tie choose the block which results in the smallest return value.
+There are N duck houses in the kingdom, conveniently numbered 1 through N. Currently, there are no roads between the houses. The king assigned Mr. Dengklek to build exactly M bidirectional roads, each connecting a pair of houses.
+
+The king imposed two rules on Mr. Dengklek:
+
+Let A and B be two different houses. Mr. Dengklek may build roads connecting these two houses if and only if 0 < |A-B| <= K. After the road is built, both house number A and house number B are said to be incident to the road. For each such pair of houses Mr. Dengklek may build multiple roads, each connecting the two houses.
+Each house must be incident to an even number of roads. (Zero is also an even number.)
+
+You are given the ints N, M, and K. Return the number of different ways Mr. Dengklek can build the roads, modulo 1,000,000,007. Two ways are different if there are two houses that are connected by a different number of roads.
 
 DEFINITION
-Class:LargestGap
-Method:getLargest
-Parameters:vector <string>
+Class:DengklekBuildingRoads
+Method:numWays
+Parameters:int, int, int
 Returns:int
-Method signature:int getLargest(vector <string> board)
+Method signature:int numWays(int N, int M, int K)
 
 
 NOTES
--Let vector <int>s A and B contain the same number of elements. Then A is lexicographically larger than B if A contains a larger value at the first position where A and B differ.
+-The houses are not required to be connected. There may be pairs of houses such that it is impossible to travel from one to another by only using the roads.
+-The roads are allowed to cross arbitrarily. (If two roads cross, the crossing is built using bridges, so that each road only connects the two houses at its ends.)
 
 
 CONSTRAINTS
--board will contain between 1 and 50 elements, inclusive.
--Each element of board will contain between 1 and 50 characters, inclusive.
--board will contain only uppercase 'X' and '.' characters.
--board will contain at least two blocks.
+-N will be between 1 and 30, inclusive.
+-M will be between 0 and 30, inclusive.
+-K will be between 1 and 8, inclusive.
 
 
 EXAMPLES
 
 0)
-{".....X.X......."}
+3
+4
+1
 
-Returns: 5
+Returns: 3
 
-Remove the first block.
+These are the three ways to build the roads:
+
+
 
 1)
-{"XXXX","....","XXXX","....","XXXX","...."}
+4
+3
+3
+
+Returns: 4
+
+These are the four ways to build the roads:
+
+
+
+2)
+2
+1
+1
 
 Returns: 0
 
-There are three blocks whose smallest indices are 0, 8, 16, respectively.
-The board after removing each of the blocks look as follows:
-
-The 1st block: "....XXXX....XXXX....".
-The 2nd block: "XXXX........XXXX....".
-The 3rd block: "XXXX....XXXX........".
-
-All three results produce the same gaps array {8,4}. So we return the smallest index among {0,8,16}.
-
-2)
-{"XXX.........XX...........XX..X"}
-
-Returns: 12
-
-There are three gaps and three blocks (recall that the board is circular).
+It is impossible to make each house incident to an even number of roads if there is only one road.
 
 3)
-{"XXX","X.....","....XX..XXXXXX","X........X..",".XXX."}
+5
+0
+3
 
-Returns: 32
+Returns: 1
 
-There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, but only one of them also maxmizes the second largest one.
+
+
+4)
+10
+20
+5
+
+Returns: 26964424
+
+
 
 */
 // END CUT HERE
@@ -149,14 +155,15 @@ There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, b
   
 // BEGIN CUT HERE
 	public:
-	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); }
+	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); if ((Case == -1) || (Case == 4)) test_case_4(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
 	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { string Arr0[] = {".....X.X......."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 5; verify_case(0, Arg1, getLargest(Arg0)); }
-	void test_case_1() { string Arr0[] = {"XXXX","....","XXXX","....","XXXX","...."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 0; verify_case(1, Arg1, getLargest(Arg0)); }
-	void test_case_2() { string Arr0[] = {"XXX.........XX...........XX..X"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 12; verify_case(2, Arg1, getLargest(Arg0)); }
-	void test_case_3() { string Arr0[] = {"XXX","X.....","....XX..XXXXXX","X........X..",".XXX."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 32; verify_case(3, Arg1, getLargest(Arg0)); }
+	void test_case_0() { int Arg0 = 3; int Arg1 = 4; int Arg2 = 1; int Arg3 = 3; verify_case(0, Arg3, numWays(Arg0, Arg1, Arg2)); }
+	void test_case_1() { int Arg0 = 4; int Arg1 = 3; int Arg2 = 3; int Arg3 = 4; verify_case(1, Arg3, numWays(Arg0, Arg1, Arg2)); }
+	void test_case_2() { int Arg0 = 2; int Arg1 = 1; int Arg2 = 1; int Arg3 = 0; verify_case(2, Arg3, numWays(Arg0, Arg1, Arg2)); }
+	void test_case_3() { int Arg0 = 5; int Arg1 = 0; int Arg2 = 3; int Arg3 = 1; verify_case(3, Arg3, numWays(Arg0, Arg1, Arg2)); }
+	void test_case_4() { int Arg0 = 10; int Arg1 = 20; int Arg2 = 5; int Arg3 = 26964424; verify_case(4, Arg3, numWays(Arg0, Arg1, Arg2)); }
 
 // END CUT HERE
 
@@ -167,7 +174,7 @@ There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, b
 int main(int argc, char *argv[])
 {
   
-  LargestGap test;
+  DengklekBuildingRoads test;
 
   if(argc == 1) {
     test.run_test(-1);

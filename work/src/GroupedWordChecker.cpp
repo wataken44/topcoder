@@ -51,27 +51,32 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class LargestGap {
+class GroupedWordChecker {
 
  public:
-  string remove(string& original, int i)
+  int howMany(vector <string> words)
   {
-    string r;
-    
-  }
-
-  int getLargest(vector <string> board)
-  {
-    int result = INT_MAX;
+    int result = 0;
     // -- main code --
 
-    string b = "";
-    TIMES(i, board.size()) {
-      b += board[i];
-    }
+    TIMES(k, words.size()) {
+      string word = words[k];
 
-    TIMES(i, b.size()) {
+      bool ok = true;
+
+      TIMES(x, word.size()) {
+        if(word.find(word.substr(x, 1), x + 1) == string::npos || word.find(word.substr(x, 1), x + 1) == x + 1) {
+          continue;
+        }else {
+          ok = false;
+          break;
+        }
+        
+      }
       
+      if(ok) {
+        ++result;
+      }
     }
     
     return result;	
@@ -83,65 +88,62 @@ class LargestGap {
   }
 /*
 // PROBLEM STATEMENT
-// Given a vector <string> board, concatenate all its elements, in order, to get a single string representing a circular board consisting of uppercase 'X' and '.' characters. "Circular" means that the first and the last characters on the board are consecutive. Maximal consecutive groups of 'X' characters form blocks and maximal consecutive groups of '.' characters form gaps. The size of the gap is the number of '.' characters in it. 
+// A word is grouped if, for each letter in the word, all occurrences of that letter form exactly one consecutive sequence.  In other words, no two equal letters are separated by one or more letters that are different.  For example, the words "ccazzzzbb" and "code" are grouped, while "aabbbccb" and "topcoder" are not.
 
-You want to remove exactly one block from the board, getting a circular board of smaller size. For each possible block to be removed consider the board after its removal, construct an array of all gaps' sizes on the board and sort this array in non-ascending order. Choose the block for which the described array is lexicographically maximal (see notes for the description of lexicographical array comparison). Return the smallest 0-based index among all characters in this block (indices are taken in the concatenated string). In case of a tie choose the block which results in the smallest return value.
+You are given several words as a vector <string>. Return how many of them are grouped.
+
 
 DEFINITION
-Class:LargestGap
-Method:getLargest
+Class:GroupedWordChecker
+Method:howMany
 Parameters:vector <string>
 Returns:int
-Method signature:int getLargest(vector <string> board)
-
-
-NOTES
--Let vector <int>s A and B contain the same number of elements. Then A is lexicographically larger than B if A contains a larger value at the first position where A and B differ.
+Method signature:int howMany(vector <string> words)
 
 
 CONSTRAINTS
--board will contain between 1 and 50 elements, inclusive.
--Each element of board will contain between 1 and 50 characters, inclusive.
--board will contain only uppercase 'X' and '.' characters.
--board will contain at least two blocks.
+-words will contain between 1 and 50 elements, inclusive.
+-Each element of words will contain between 1 and 50 characters, inclusive.
+-Each element of words will contain only lowercase letters ('a' - 'z').
+-All elements of words will be distinct.
 
 
 EXAMPLES
 
 0)
-{".....X.X......."}
+{"ccazzzzbb", "code", "aabbbccb", "topcoder"}
 
-Returns: 5
+Returns: 2
 
-Remove the first block.
+As mentioned in the problem statement, the first two words are grouped.
 
 1)
-{"XXXX","....","XXXX","....","XXXX","...."}
+{"ab", "aa", "aca", "ba", "bb"}
+
+Returns: 4
+
+"aca" is not a grouped word.
+
+2)
+{"happy", "new", "year"}
+
+Returns: 3
+
+
+
+3)
+{"yzyzy", "zyzyz"}
 
 Returns: 0
 
-There are three blocks whose smallest indices are 0, 8, 16, respectively.
-The board after removing each of the blocks look as follows:
 
-The 1st block: "....XXXX....XXXX....".
-The 2nd block: "XXXX........XXXX....".
-The 3rd block: "XXXX....XXXX........".
 
-All three results produce the same gaps array {8,4}. So we return the smallest index among {0,8,16}.
+4)
+{"z"}
 
-2)
-{"XXX.........XX...........XX..X"}
+Returns: 1
 
-Returns: 12
 
-There are three gaps and three blocks (recall that the board is circular).
-
-3)
-{"XXX","X.....","....XX..XXXXXX","X........X..",".XXX."}
-
-Returns: 32
-
-There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, but only one of them also maxmizes the second largest one.
 
 */
 // END CUT HERE
@@ -149,14 +151,15 @@ There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, b
   
 // BEGIN CUT HERE
 	public:
-	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); }
+	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); if ((Case == -1) || (Case == 4)) test_case_4(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
 	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { string Arr0[] = {".....X.X......."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 5; verify_case(0, Arg1, getLargest(Arg0)); }
-	void test_case_1() { string Arr0[] = {"XXXX","....","XXXX","....","XXXX","...."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 0; verify_case(1, Arg1, getLargest(Arg0)); }
-	void test_case_2() { string Arr0[] = {"XXX.........XX...........XX..X"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 12; verify_case(2, Arg1, getLargest(Arg0)); }
-	void test_case_3() { string Arr0[] = {"XXX","X.....","....XX..XXXXXX","X........X..",".XXX."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 32; verify_case(3, Arg1, getLargest(Arg0)); }
+	void test_case_0() { string Arr0[] = {"ccazzzzbb", "code", "aabbbccb", "topcoder"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 2; verify_case(0, Arg1, howMany(Arg0)); }
+	void test_case_1() { string Arr0[] = {"ab", "aa", "aca", "ba", "bb"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 4; verify_case(1, Arg1, howMany(Arg0)); }
+	void test_case_2() { string Arr0[] = {"happy", "new", "year"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 3; verify_case(2, Arg1, howMany(Arg0)); }
+	void test_case_3() { string Arr0[] = {"yzyzy", "zyzyz"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 0; verify_case(3, Arg1, howMany(Arg0)); }
+	void test_case_4() { string Arr0[] = {"z"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 1; verify_case(4, Arg1, howMany(Arg0)); }
 
 // END CUT HERE
 
@@ -167,7 +170,7 @@ There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, b
 int main(int argc, char *argv[])
 {
   
-  LargestGap test;
+  GroupedWordChecker test;
 
   if(argc == 1) {
     test.run_test(-1);

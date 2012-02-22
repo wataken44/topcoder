@@ -51,27 +51,21 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class LargestGap {
+class LampsGrid {
 
  public:
-  string remove(string& original, int i)
+  int mostLit(vector <string> initial, int K)
   {
-    string r;
-    
-  }
-
-  int getLargest(vector <string> board)
-  {
-    int result = INT_MAX;
+    int result = 0;
     // -- main code --
 
-    string b = "";
-    TIMES(i, board.size()) {
-      b += board[i];
-    }
-
-    TIMES(i, b.size()) {
-      
+    TIMES(i, initial.size()) {
+      string& s = initial[i];
+      int c = count(s.begin(), s.end(), '0');
+      if(K >= c && (K - c) % 2 == 0) {
+        int r = count(initial.begin(), initial.end(), s);
+        result = max(result, r);
+      }
     }
     
     return result;	
@@ -83,65 +77,85 @@ class LargestGap {
   }
 /*
 // PROBLEM STATEMENT
-// Given a vector <string> board, concatenate all its elements, in order, to get a single string representing a circular board consisting of uppercase 'X' and '.' characters. "Circular" means that the first and the last characters on the board are consecutive. Maximal consecutive groups of 'X' characters form blocks and maximal consecutive groups of '.' characters form gaps. The size of the gap is the number of '.' characters in it. 
+// Jack has bought a rectangular table containing a grid of lamps.  Each lamp is initially either "on" or "off".  There is a switch underneath each column, and when the switch is flipped, all the lamps in that column reverse their states ("on" lamps become "off" and vice versa).
 
-You want to remove exactly one block from the board, getting a circular board of smaller size. For each possible block to be removed consider the board after its removal, construct an array of all gaps' sizes on the board and sort this array in non-ascending order. Choose the block for which the described array is lexicographically maximal (see notes for the description of lexicographical array comparison). Return the smallest 0-based index among all characters in this block (indices are taken in the concatenated string). In case of a tie choose the block which results in the smallest return value.
+
+
+A row in the grid is considered lit if all the lamps in that row are "on".  Jack must make exactly K flips.  The K flips do not necessarily have to be performed on K distinct switches.  His goal is to have as many lit rows as possible after making those flips.
+
+
+You are given a vector <string> initial, where the j-th character of the i-th element is '1' (one) if the lamp in row i, column j is initially "on", and '0' (zero) otherwise.  Return the maximal number of rows that can be lit after performing exactly K flips.
+
 
 DEFINITION
-Class:LargestGap
-Method:getLargest
-Parameters:vector <string>
+Class:LampsGrid
+Method:mostLit
+Parameters:vector <string>, int
 Returns:int
-Method signature:int getLargest(vector <string> board)
-
-
-NOTES
--Let vector <int>s A and B contain the same number of elements. Then A is lexicographically larger than B if A contains a larger value at the first position where A and B differ.
+Method signature:int mostLit(vector <string> initial, int K)
 
 
 CONSTRAINTS
--board will contain between 1 and 50 elements, inclusive.
--Each element of board will contain between 1 and 50 characters, inclusive.
--board will contain only uppercase 'X' and '.' characters.
--board will contain at least two blocks.
+-initial will contain between 1 and 50 elements, inclusive.
+-Each element of initial will contain between 1 and 50 characters, inclusive.
+-Each element of initial will contain the same number of characters.
+-Each element of initial will contain only the digits '0' and '1'.
+-K will be between 0 and 1000, inclusive.
 
 
 EXAMPLES
 
 0)
-{".....X.X......."}
+{"01",
+ "10",
+ "10"}
+1
 
-Returns: 5
+Returns: 2
 
-Remove the first block.
+Here, Jack must flip exactly one switch.  If he flips the switch for the second column, the bottom two rows become lit.
 
 1)
-{"XXXX","....","XXXX","....","XXXX","...."}
+{"101010"}
+2
 
 Returns: 0
 
-There are three blocks whose smallest indices are 0, 8, 16, respectively.
-The board after removing each of the blocks look as follows:
 
-The 1st block: "....XXXX....XXXX....".
-The 2nd block: "XXXX........XXXX....".
-The 3rd block: "XXXX....XXXX........".
-
-All three results produce the same gaps array {8,4}. So we return the smallest index among {0,8,16}.
 
 2)
-{"XXX.........XX...........XX..X"}
+{"00", "11"}
+999
 
-Returns: 12
+Returns: 0
 
-There are three gaps and three blocks (recall that the board is circular).
+No row can be lit after exactly 999 flips.
+
 
 3)
-{"XXX","X.....","....XX..XXXXXX","X........X..",".XXX."}
+{"0", "1", "0", "1", "0"}
 
-Returns: 32
+1000
 
-There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, but only one of them also maxmizes the second largest one.
+Returns: 2
+
+
+
+4)
+{"001", "101", "001", "000", "111", "001", "101", "111", "110", "000", "111", "010", "110", "001"}
+6
+
+Returns: 4
+
+
+
+5)
+{"01", "10", "01", "01", "10"}
+1
+
+Returns: 3
+
+
 
 */
 // END CUT HERE
@@ -149,14 +163,19 @@ There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, b
   
 // BEGIN CUT HERE
 	public:
-	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); }
+	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); if ((Case == -1) || (Case == 4)) test_case_4(); if ((Case == -1) || (Case == 5)) test_case_5(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
 	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { string Arr0[] = {".....X.X......."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 5; verify_case(0, Arg1, getLargest(Arg0)); }
-	void test_case_1() { string Arr0[] = {"XXXX","....","XXXX","....","XXXX","...."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 0; verify_case(1, Arg1, getLargest(Arg0)); }
-	void test_case_2() { string Arr0[] = {"XXX.........XX...........XX..X"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 12; verify_case(2, Arg1, getLargest(Arg0)); }
-	void test_case_3() { string Arr0[] = {"XXX","X.....","....XX..XXXXXX","X........X..",".XXX."}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 32; verify_case(3, Arg1, getLargest(Arg0)); }
+	void test_case_0() { string Arr0[] = {"01",
+ "10",
+ "10"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 1; int Arg2 = 2; verify_case(0, Arg2, mostLit(Arg0, Arg1)); }
+	void test_case_1() { string Arr0[] = {"101010"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 2; int Arg2 = 0; verify_case(1, Arg2, mostLit(Arg0, Arg1)); }
+	void test_case_2() { string Arr0[] = {"00", "11"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 999; int Arg2 = 0; verify_case(2, Arg2, mostLit(Arg0, Arg1)); }
+	void test_case_3() { string Arr0[] = {"0", "1", "0", "1", "0"}
+; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 1000; int Arg2 = 2; verify_case(3, Arg2, mostLit(Arg0, Arg1)); }
+	void test_case_4() { string Arr0[] = {"001", "101", "001", "000", "111", "001", "101", "111", "110", "000", "111", "010", "110", "001"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 6; int Arg2 = 4; verify_case(4, Arg2, mostLit(Arg0, Arg1)); }
+	void test_case_5() { string Arr0[] = {"01", "10", "01", "01", "10"}; vector <string> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 1; int Arg2 = 3; verify_case(5, Arg2, mostLit(Arg0, Arg1)); }
 
 // END CUT HERE
 
@@ -167,7 +186,7 @@ There are 5 blocks and 5 gaps. There are two ways to maximize the largest gap, b
 int main(int argc, char *argv[])
 {
   
-  LargestGap test;
+  LampsGrid test;
 
   if(argc == 1) {
     test.run_test(-1);
