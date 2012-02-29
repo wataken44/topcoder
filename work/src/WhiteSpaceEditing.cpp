@@ -56,16 +56,8 @@ class WhiteSpaceEditing {
  public:
   int getMinimum(vector <int> lines)
   {
-    int result = 0;
+    int result;
     // -- main code --
-
-    sort(lines.begin(), lines.end());
-
-    result += lines[0];
-    FOR(i, 1, lines.size()) {
-      result += lines[i] - lines[i - 1];
-      ++result; // RET
-    }
     
     return result;	
   }
