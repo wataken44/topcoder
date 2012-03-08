@@ -1,33 +1,109 @@
+#include <algorithm>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <complex>
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
-#include <climits>
-#include <cfloat>
-#include <map>
-#include <utility>
-#include <set>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <vector>
-#include <algorithm>
 #include <functional>
-#include <sstream>
-#include <complex>
-#include <stack>
+#include <iostream>
+#include <list>
+#include <map>
+#include <memory>
 #include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <utility>
+#include <vector>
+
+typedef int int_type;
 
 // -- utility --
-#define FOR(x, a, b) for(int x = static_cast<int>(a); x < static_cast<int>(b); ++x)
-#define TIMES(x,n) FOR(x, 0, n)
-#define UPTO(x, a, b) for(int x = static_cast<int>(a); x <= static_cast<int>(b); ++x)
-#define DOWNTO(x, a, b) for(int x = static_cast<int>(a); x >= static_cast<int>(b) ++x)
-#define DUMP(x) std::cerr << #x << " = " << x << std::endl;
+// C-style loop
+#define FOR(x, a, b) for(int_type x = static_cast<int_type>(a); x < static_cast<int_type>(b); ++x)
+// Ruby-style loop
+#define TIMES(x, n) FOR(x, 0, n)
+#define STEP(x, a, b, s) for(int_type x = static_cast<int_type>(a); s > 0 ? x <= static_cast<int_type>(b) : x >= static_cast<int_type>(b); x += static_cast<int_type>(s) )
+#define UPTO(x, a, b) for(int_type x = static_cast<int_type>(a); x <= static_cast<int_type>(b); ++x)
+#define DOWNTO(x, a, b) for(int_type x = static_cast<int_type>(a); x >= static_cast<int_type>(b); --x)
+#define EACH(c, i) for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); ++i)
+#define ALL(cont, it, cond, ret) \
+  bool ret = true; EACH(cont, it) { if(!(cond)) {ret=false;break;} }
+#define ANY(cont, it, cond, ret) \
+  bool ret = false; EACH(cont, it) { if(cond) {ret=true;break;} }
 
 using namespace std;
+// debug
+// BEGIN CUT HERE
+#define DUMP(x) std::cerr << #x << " = " << to_s(x) << std::endl;
+template<typename T> string to_s(const T& v);
+template<> string to_s(const string& v);
+template<> string to_s(const bool& v);
+template<typename T> string to_s(const vector<T>& v);
+template<typename T> string to_s(const list<T>& v);
+template<typename T> string to_s(const set<T>& v);
+template<typename F, typename S> string to_s(const pair<F,S>& v);
+template<typename K, typename V> string to_s(const map<K,V>& v);
+// END CUT HERE
+#ifndef DUMP
+#define DUMP(x) 
+#endif
 
 class RevealTriangle {
+
+ public:
+  vector <string> calcTriangle(vector <string> questionMarkTriangle)
+  {
+    vector <string> ret(questionMarkTriangle);
+    // -- main code --
+
+    while(true) {
+      bool ok = true;
+      TIMES(y, ret.size()) {
+        TIMES(x, ret[y].size()) {
+          if(ret[y][x] == '?') {
+            ok = false;
+            break;
+          }
+        }
+        if(!ok) break;
+      }
+      if(ok) break;
+
+      TIMES(y, ret.size() - 1) {
+        TIMES(x, ret[y].size() - 1) {
+          if(ret[y][x] == '?' && ret[y][x+1] != '?' && ret[y+1][x] != '?' ) {
+            int a = to_i(ret[y][x+1]);
+            int b = to_i(ret[y+1][x]);
+            ret[y][x] = to_c((b - a + 20) % 10);
+          }
+          if(ret[y][x] != '?' && ret[y][x+1] == '?' && ret[y+1][x] != '?' ) {
+            int a = to_i(ret[y][x]);
+            int b = to_i(ret[y+1][x]);
+            ret[y][x+1] = to_c((b - a + 20) % 10);
+          }
+          if(ret[y][x] != '?' && ret[y][x+1] != '?' && ret[y+1][x] == '?' ) {
+            int a = to_i(ret[y][x]);
+            int b = to_i(ret[y][x+1]);
+            ret[y][x] = to_c((a + b) % 10);
+          }
+        }
+      }
+      DUMP(ret);
+    }
+    
+    return ret;	
+  }
+
+  int to_i(char c) { return c - '0'; }
+  char to_c(int i) { return i + '0'; }
+
 // BEGIN CUT HERE
+  void debug()
+  {
+  }
 /*
 // PROBLEM STATEMENT
 // 
@@ -116,56 +192,7 @@ Returns: {"7054", "759", "24", "6" }
 
 */
 // END CUT HERE
-
- public:
-  vector <string> calcTriangle(vector <string> questionMarkTriangle)
-  {
-    vector <string> result = questionMarkTriangle;
-    // -- main code --
-
-    int c = 0;
-    while(true) {
-      bool changed = false;
-      TIMES(y, result.size() - 1) {
-        TIMES(x, result[y].size() - 1) {
-          if(result[y][x] == '?' and result[y][x+1] != '?' and result[y+1][x] != '?') {
-            changed = true;
-            int i = (10 + to_i(result[y+1][x]) - to_i(result[y][x+1])) % 10;
-            result[y][x] = to_c(i);
-          }
-          if(result[y][x] != '?' and result[y][x+1] == '?' and result[y+1][x] != '?') {
-            changed = true;
-            int i = (10 + to_i(result[y+1][x]) - to_i(result[y][x])) % 10;
-            result[y][x+1] = to_c(i);
-          }
-          if(result[y][x] != '?' and result[y][x+1] != '?' and result[y+1][x] == '?') {
-            changed = true;
-            int i = (to_i(result[y][x]) + to_i(result[y][x+1])) % 10;
-            result[y+1][x] = to_c(i);
-          }
-        }
-      }
-      ++c;
-      if(not changed) {
-        break;
-      }
-
-      // safty
-      if(c > 50*50*20) {
-        break;
-      }
-    }
-    
-    return result;	
-  }
   
-int to_i(char c) {
-  return c - '0';
-}
-
-char to_c(int i) {
-  return '0' + i;
-}
   
 // BEGIN CUT HERE
 	public:
@@ -186,13 +213,32 @@ char to_c(int i) {
 
 // BEGIN CUT HERE
 
-int main()
+int main(int argc, char *argv[])
 {
+  
   RevealTriangle test;
-  test.run_test(-1);
+
+  if(argc == 1) {
+    test.run_test(-1);
+  }else {
+    std::string arg(argv[1]);
+    if(arg[0] != '-') {
+      test.run_test(arg[0] - '0');
+    }else {
+      test.debug();
+    }
+  }
   
   return 0;
 }
 
-// END CUT HERE
+template<typename T> string to_s(const T& v) { ostringstream oss; oss << v; return oss.str(); }
+template<> string to_s(const string& v) { ostringstream oss; oss << '"' << v << '"'; return oss.str(); }
+template<> string to_s(const bool& v) { ostringstream oss; oss << ( v ? "true" : "false") ; return oss.str(); } 
+template<typename T> string to_s(const vector<T>& v) { ostringstream oss; oss << "["; EACH(v,i) oss << to_s(*i) << ","; oss << "]"; return oss.str(); }
+template<typename T> string to_s(const list<T>& v) { ostringstream oss; oss << "("; EACH(v,i) oss << to_s(*i) << ","; oss << ")"; return oss.str(); }
+template<typename T> string to_s(const set<T>& v) { ostringstream oss; oss << "{"; EACH(v,i) oss << to_s(*i) << ","; oss << "}"; return oss.str(); }
+template<typename F, typename S> string to_s(const pair<F,S>& v) { ostringstream oss; oss << "<" << to_s(v.first) << " " << to_s(v.second) << ">"; return oss.str(); }
+template<typename K, typename V> string to_s(const map<K,V>& v) { ostringstream oss; oss << "{"; EACH(v,i) oss << to_s(i->first) << " => " << to_s(i->second) << ","; oss << "}"; return oss.str(); }
 
+// END CUT HERE

@@ -51,29 +51,81 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class KSubstring {
+class TheLuckySequence {
 
  public:
-  vector <int> maxSubstring(int A0, int X, int Y, int M, int n)
+  bool isLucky(int n)
   {
-    vector <int> result;
+    if(n == 0) return false;
+    while(n > 0) {
+      int m = n % 10;
+      if(m != 4 && m != 7) return false;
+      n /= 10;
+    }
+    return true;
+  }
+
+  int first(int n)
+  {
+    while(n >= 10) n /= 10;
+    return n;
+  }
+
+  int last(int n)
+  {
+    return n % 10;
+  }
+  
+  int count(vector <int> numbers, int length)
+  {
+    int modulo = 1234567891;
     // -- main code --
 
+    vector<int> lucky;
+    TIMES(i, numbers.size()) {
+      int n = numbers[i];
+      if(!isLucky(n)) continue;
+      if(find(lucky.begin(), lucky.end(), n) == lucky.end()) {
+        lucky.push_back(n);
+      }
+    }
+
+    sort(lucky.begin(), lucky.end());
+
+    int lsz = lucky.size();
+    vector< vector<int> > graph(lsz, vector<int>(lsz, 0));
+
+    TIMES(y, lsz) {
+      TIMES(x, lsz) {
+        if(last(lucky[y]) != first(lucky[x])) continue;
+        graph[y][x] = 1;
+      }
+    }
+
+    //DUMP(lucky);
+    //DUMP(graph);
+
     typedef long long ll;
-    vector<ll> a(n, 0);
+    vector< vector<ll> > dp(length, vector<ll>(lsz, 0));
 
-    a[0] = A0;
-    FOR(i, 1, n) { a[i] = (a[i-1] * X) % M; }
+    TIMES(x, lsz) {
+      dp[0][x] = 1;
+    }
 
-    int mk = 0;
-    int md = INT_MAX;
+    FOR(z, 1, length) {
+      FOR(x, 0, lsz) {
+        FOR(y, 0, lsz) {
+          if(graph[y][x] == 1) {
+            dp[z][x] = (dp[z][x] + dp[z - 1][y]) % modulo;
+          }
+        }
+      }
+    }
 
-    vector< vector< ll > > dd;
-    
-    
-    FOR(k, 2, n) {
-      dd.push_back(vector<ll>());
-      
+    ll result = 0;
+
+    TIMES(x, lsz) {
+      result = (result + dp[length - 1][x]) % modulo;
     }
     
     return result;
@@ -86,87 +138,72 @@ class KSubstring {
 /*
 // PROBLEM STATEMENT
 // 
-	You are given numbers A0, X, Y, M and n. 
-	Generate a list A of length n using the following recursive definition:
-	A[0] = A0
-	A[i] = (A[i - 1] * X + Y) MOD M (note that A[i - 1] * X + Y may overflow 32-bit integer)
+John thinks 4 and 7 are lucky digits, and all other digits are not lucky.  A lucky number is a number that contains only lucky digits in decimal notation.
 
 
 
-	Let s(i, k) be a sum of k consecutive elements of the list A starting with the element at
-	position i (0 indexed).
-	More formally, s(i, k) = A[i] + A[i + 1] + ... + A[i + k - 1].
-	
-	Your task is to find the smallest difference between s(i, k) and s(j, k) 
-	(where difference is defined as abs(s(i, k) - s(j, k))) such that
-	i + k <= j. 
-	In other words, you must find the smallest difference between two subsequences of the same 
-	length that do not overlap.
-	Call this smallest difference val, and return a vector <int> containing exactly two elements.
-	The first element should be k, and the second element should be val.
-	If there are multiple solutions with the same val, return the one among them with the highest k.
+A lucky sequence is a sequence of length numbers A[0], A[1], ..., A[length - 1] that satisfies all of the following properties:
+
+Each number A[i] is lucky, where 0 <= i < length.
+For each i, where 0 <= i < length, there exists at least one j such that A[i] = numbers[j].
+For each i, where 0 <= i < length - 1, the last digit of A[i] is the same as the first digit of A[i + 1].
+
+
+
+
+You are given a vector <int> numbers and an int length.  Return the number of distinct lucky sequences modulo 1234567891. 
 
 
 
 DEFINITION
-Class:KSubstring
-Method:maxSubstring
-Parameters:int, int, int, int, int
-Returns:vector <int>
-Method signature:vector <int> maxSubstring(int A0, int X, int Y, int M, int n)
+Class:TheLuckySequence
+Method:count
+Parameters:vector <int>, int
+Returns:int
+Method signature:int count(vector <int> numbers, int length)
+
+
+NOTES
+-Two lucky sequences A[0], A[1], ..., A[length - 1] and B[0], B[1], ..., B[length - 1] are considered distinct if there exists i, 0 <= i < length, such that A[i] ­ B[i].
 
 
 CONSTRAINTS
--M will be between 1 and 1,000,000,000, inclusive.
--A0 will be between 0 and M-1, inclusive.
--X will be between 0 and M-1, inclusive.
--Y will be between 0 and M-1, inclusive.
--n will be between 2 and 3,000, inclusive.
+-numbers will contain between 1 and 50 elements, inclusive.
+-Each element of numbers will be between 1 and 1,000,000,000, inclusive.
+-length will be between 1 and 1,000,000,000, inclusive.
 
 
 EXAMPLES
 
 0)
-5
-3
-4
-25
-5
+{1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
+1
 
-Returns: {2, 1 }
+Returns: 2
 
-The elements of the list are {5, 19, 11, 12, 15}. There is no way to find two subsequences that have equal sums and do not overlap, so there is no way to obtain 0 as a difference. |s(0, 2) - s(2, 2)| = 1 and that is the minimal difference. Note that |s(2, 1) - s(3, 1)| is also 1, but we don't choose these subsequences because they have a lower value for k.
+There are only two lucky numbers among these ten integers.
 
 1)
-8
-19
-17
-2093
-12
+{47, 74, 47}
+3
 
-Returns: {5, 161 }
+Returns: 2
 
-The elements of the list are {8, 169, 1135, 652, 1940, 1296, 1618, 1457, 491, 974, 1779, 330}. The smallest difference is |s(1, 5) - s(7, 5)| = 161.
+We can construct only two different sequences (47, 74, 47) and (74, 47, 74).
 
 2)
-53
-13
-9
-65535
-500
+{100, 4774, 200, 747, 300}
+47
 
-Returns: {244, 0 }
+Returns: 2
 
 
 
 3)
-12
-34
-55
-7890
-123
+{44, 47, 74, 77}
+2
 
-Returns: {35, 4 }
+Returns: 8
 
 
 
@@ -179,11 +216,11 @@ Returns: {35, 4 }
 	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
-	void verify_case(int Case, const vector <int> &Expected, const vector <int> &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: " << print_array(Expected) << endl; cerr << "\tReceived: " << print_array(Received) << endl; } }
-	void test_case_0() { int Arg0 = 5; int Arg1 = 3; int Arg2 = 4; int Arg3 = 25; int Arg4 = 5; int Arr5[] = {2, 1 }; vector <int> Arg5(Arr5, Arr5 + (sizeof(Arr5) / sizeof(Arr5[0]))); verify_case(0, Arg5, maxSubstring(Arg0, Arg1, Arg2, Arg3, Arg4)); }
-	void test_case_1() { int Arg0 = 8; int Arg1 = 19; int Arg2 = 17; int Arg3 = 2093; int Arg4 = 12; int Arr5[] = {5, 161 }; vector <int> Arg5(Arr5, Arr5 + (sizeof(Arr5) / sizeof(Arr5[0]))); verify_case(1, Arg5, maxSubstring(Arg0, Arg1, Arg2, Arg3, Arg4)); }
-	void test_case_2() { int Arg0 = 53; int Arg1 = 13; int Arg2 = 9; int Arg3 = 65535; int Arg4 = 500; int Arr5[] = {244, 0 }; vector <int> Arg5(Arr5, Arr5 + (sizeof(Arr5) / sizeof(Arr5[0]))); verify_case(2, Arg5, maxSubstring(Arg0, Arg1, Arg2, Arg3, Arg4)); }
-	void test_case_3() { int Arg0 = 12; int Arg1 = 34; int Arg2 = 55; int Arg3 = 7890; int Arg4 = 123; int Arr5[] = {35, 4 }; vector <int> Arg5(Arr5, Arr5 + (sizeof(Arr5) / sizeof(Arr5[0]))); verify_case(3, Arg5, maxSubstring(Arg0, Arg1, Arg2, Arg3, Arg4)); }
+	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
+	void test_case_0() { int Arr0[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10}; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 1; int Arg2 = 2; verify_case(0, Arg2, count(Arg0, Arg1)); }
+	void test_case_1() { int Arr0[] = {47, 74, 47}; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 3; int Arg2 = 2; verify_case(1, Arg2, count(Arg0, Arg1)); }
+	void test_case_2() { int Arr0[] = {100, 4774, 200, 747, 300}; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 47; int Arg2 = 2; verify_case(2, Arg2, count(Arg0, Arg1)); }
+	void test_case_3() { int Arr0[] = {44, 47, 74, 77}; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 2; int Arg2 = 8; verify_case(3, Arg2, count(Arg0, Arg1)); }
 
 // END CUT HERE
 
@@ -194,7 +231,7 @@ Returns: {35, 4 }
 int main(int argc, char *argv[])
 {
   
-  KSubstring test;
+  TheLuckySequence test;
 
   if(argc == 1) {
     test.run_test(-1);
