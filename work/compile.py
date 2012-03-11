@@ -11,12 +11,8 @@ import os
 
 def compile_main():
     exedir = 'exe'
-    platform = sys.platform
-    destdir = exedir + "/" + platform + "/" 
-    
-    if(not os.path.exists(destdir)):
-        os.mkdir(destdir)
-    
+    destdir = exedir + "/"
+        
     src = sys.argv[1]
     dest_obj = destdir + os.path.splitext(os.path.basename(src))[0] + ".o"
     dest_exe = destdir + os.path.splitext(os.path.basename(src))[0] + ".exe"

@@ -71,7 +71,7 @@ class RevealTriangle {
         if(!ok) break;
       }
       if(ok) break;
-
+ 
       TIMES(y, ret.size() - 1) {
         TIMES(x, ret[y].size() - 1) {
           if(ret[y][x] == '?' && ret[y][x+1] != '?' && ret[y+1][x] != '?' ) {
