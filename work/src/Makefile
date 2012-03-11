@@ -22,6 +22,12 @@ ifneq ($(src),)
 	$(exedir)$(exe) $(testcase)
 endif
 
+all:
+ifneq ($(src),)
+	make compile src=$(src)
+	make test src=$(src)
+endif
+
 clean:
 ifneq ($(src),)
 	rm -rf $(exedir)$(obj)

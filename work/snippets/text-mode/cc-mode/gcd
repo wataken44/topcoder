@@ -1,0 +1,11 @@
+template<typename T>
+T gcd(T a, T b)
+{
+  if(a > b) swap(a, b);
+  while(a != 0) {
+    T t = b % a;
+    b = a;
+    a = t;
+  }
+  return b;
+}
