@@ -1,5 +1,5 @@
 #TopCoder ContestApplet Preferences File
-#Mon Apr 02 23:14:41 JST 2012
+#Wed Apr 11 19:40:05 JST 2012
 com.topcoder.client.contestApplet.common.LocalPreferences.menufont=Arial
 com.topcoder.client.contestApplet.common.LocalPreferences.menufontsize=10
 com.topcoder.client.contestApplet.common.LocalPreferences.commonclasspath=/Users/wataken44/Documents/topcoder/bin/TZTester.jar\:/Users/wataken44/Documents/topcoder/bin/FileEdit.jar\:/Users/wataken44/Documents/topcoder/bin/CodeProcessor.jar
@@ -166,9 +166,9 @@ com.topcoder.jmaContestApplet.frames.codingframe.size=458\:843
 com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=272
 com.topcoder.jmaContestApplet.frames.statementViewer.location=377\:376
 com.topcoder.jmaContestApplet.frames.statementViewer.size=760\:360
-com.topcoder.jmaContestApplet.frames.sourceViewer.location=30\:223
-com.topcoder.jmaContestApplet.frames.sourceViewer.size=776\:745
-com.topcoder.jmaContestApplet.frames.sourceViewer.dividerloc=199
+com.topcoder.jmaContestApplet.frames.sourceViewer.location=762\:279
+com.topcoder.jmaContestApplet.frames.sourceViewer.size=518\:745
+com.topcoder.jmaContestApplet.frames.sourceViewer.dividerloc=117
 com.topcoder.jmaContestApplet.ContestApplet.disableEnterExitMsgs=true
 fileeditor.config.dirName=/Users/wataken44/Documents/topcoder/work/src
 fileeditor.config.fileName=problem
