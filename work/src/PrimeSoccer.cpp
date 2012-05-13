@@ -51,26 +51,52 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class ColorfulRabbits {
+class PrimeSoccer {
 
  public:
-  int getMinimum(vector <int> replies)
+  bool isPrime(int n)
   {
-    int result = 0;
+    if(n < 2) return false;
+
+    FOR(i, 2, n) {
+      if(n % i == 0) return false;
+    }
+    return true;
+  }
+
+  double getProbability(int skillOfTeamA, int skillOfTeamB)
+  {
+    double pA = 0.01 * skillOfTeamA;
+    double pB = 0.01 * skillOfTeamB;
+
+    vector< vector< double > > dpa(19, vector< double >(19, 0.0));
+    vector< vector< double > > dpb(19, vector< double >(19, 0.0));
+
+    dpa[1][0] = 1 - pA;
+    dpa[1][1] = pA;
+
+    dpb[1][0] = 1 - pB;
+    dpb[1][1] = pB;
+    
+    UPTO(t, 2, 18) {
+      UPTO(s, 0, 18) {
+        dpa[t][s] = dpa[t - 1][s] * (1 - pA);
+        if(s > 0) dpa[t][s] += dpa[t - 1][s - 1] * pA;
+
+        dpb[t][s] = dpb[t - 1][s] * (1 - pB);
+        if(s > 0) dpb[t][s] += dpb[t - 1][s - 1] * pB;
+      }
+    }
+    
+    double result = 0;
     // -- main code --
 
-    map<int, int> count;
-
-    TIMES(i, replies.size()) {
-      int r = replies[i];
-      if(count.find(r) == count.end()) count[r] = 0;
-      ++count[r];
-    }
-
-    EACH(count, it) {
-      int r = it->first;
-      int c = it->second;
-      result += c % (r + 1) == 0 ? c : (1 + c / (r + 1)) * (r + 1);
+    TIMES(a, 19) {
+      TIMES(b, 19) {
+        if(isPrime(a) || isPrime(b)) {
+          result += dpa[18][a] * dpb[18][b];
+        }
+      }
     }
     
     return result;	
@@ -82,54 +108,49 @@ class ColorfulRabbits {
   }
 /*
 // PROBLEM STATEMENT
-// Cat Pochi visited a town of rabbits and asked some of the rabbits the following question: 
-"How many rabbits in this town other than yourself have the same color as you?". 
-The rabbits all replied truthfully, and no rabbit was asked the question more than once. 
-You are given the rabbits' replies in the vector <int> replies. 
-Return the minimum possible number of rabbits in this town. 
-
+// You are watching a soccer match, and you wonder what the probability is that at least one of the two teams will score a prime number of goals.  The game lasts 90 minutes, and to simplify the analysis, we will split the match into five-minute intervals.  The first interval is the first five minutes, the second interval is the next five minutes, and so on.  During each interval, there is a skillOfTeamA percent probability that team A will score a goal, and a skillOfTeamB percent probability that teamB will score a goal.  Assume that each team will score at most one goal within each interval.  Return the probability that at least one team will have a prime number as its final score.
 
 DEFINITION
-Class:ColorfulRabbits
-Method:getMinimum
-Parameters:vector <int>
-Returns:int
-Method signature:int getMinimum(vector <int> replies)
+Class:PrimeSoccer
+Method:getProbability
+Parameters:int, int
+Returns:double
+Method signature:double getProbability(int skillOfTeamA, int skillOfTeamB)
+
+
+NOTES
+-The returned value must be accurate to within a relative or absolute value of 1E-9.
+-A prime number is a number that has exactly two divisors, 1 and itself. Note that 0 and 1 are not prime.
 
 
 CONSTRAINTS
--replies will contain between 1 and 50 elements, inclusive. 
--Each element of replies will be between 0 and 1,000,000, inclusive. 
+-skillOfTeamA will be between 0 and 100, inclusive.
+-skillOfTeamB will be between 0 and 100, inclusive.
 
 
 EXAMPLES
 
 0)
-{ 1, 1, 2, 2 }
+50
+50
 
-
-Returns: 5
-
-If there are 2 rabbits with a color and 3 rabbits with another color, 
-Pochi can get this set of replies. 
-
+Returns: 0.5265618908306351
 
 
 
 1)
-{ 0 }
+100
+100
 
+Returns: 0.0
 
-Returns: 1
-
-A poor lonely rabbit. 
-
+Both teams will score a goal in each interval, so the final result will be 18 to 18.
 
 2)
-{ 2, 2, 44, 2, 2, 2, 444, 2, 2 }
+12
+89
 
-
-Returns: 499
+Returns: 0.6772047168840167
 
 
 
@@ -142,13 +163,10 @@ Returns: 499
 	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
-	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { int Arr0[] = { 1, 1, 2, 2 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 5; verify_case(0, Arg1, getMinimum(Arg0)); }
-	void test_case_1() { int Arr0[] = { 0 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 1; verify_case(1, Arg1, getMinimum(Arg0)); }
-	void test_case_2() { int Arr0[] = { 2, 2, 44, 2, 2, 2, 444, 2, 2 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 499; verify_case(2, Arg1, getMinimum(Arg0)); }
+	void verify_case(int Case, const double &Expected, const double &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
+	void test_case_0() { int Arg0 = 50; int Arg1 = 50; double Arg2 = 0.5265618908306351; verify_case(0, Arg2, getProbability(Arg0, Arg1)); }
+	void test_case_1() { int Arg0 = 100; int Arg1 = 100; double Arg2 = 0.0; verify_case(1, Arg2, getProbability(Arg0, Arg1)); }
+	void test_case_2() { int Arg0 = 12; int Arg1 = 89; double Arg2 = 0.6772047168840167; verify_case(2, Arg2, getProbability(Arg0, Arg1)); }
 
 // END CUT HERE
 
@@ -159,7 +177,7 @@ Returns: 499
 int main(int argc, char *argv[])
 {
   
-  ColorfulRabbits test;
+  PrimeSoccer test;
 
   if(argc == 1) {
     test.run_test(-1);

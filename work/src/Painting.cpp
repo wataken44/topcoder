@@ -54,54 +54,58 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 class Painting {
 
  public:
-  int largestBrush(vector <string> pic)
+  vector<string> pic;
+  int w;
+  int h;
+
+  bool paint(int s)
   {
-    // -- main code --
-    
-    vector<string> picture;
-
-    picture.push_back(string(pic[0].size()+2, 'W'));
-    
-    TIMES(y, pic.size()) {
-      picture.push_back("W" + pic[y] + "W");
-    }
-
-    picture.push_back(string(pic[0].size()+2, 'W'));
-
-    DUMP(pic);
-    
-    int xsz = picture[0].size();
-    int ysz = picture.size();
-    
-    int result = min(xsz, ysz);
-
-    TIMES(y, ysz) {
-      DUMP(picture[y]);
-      TIMES(x, xsz) {
-        if(picture[y][x] == 'W') {
-          if(y != ysz - 1 && picture[y+1][x] != 'W') {
-            result = min(result, ysz - y - 1);
-            for(int i = 1; i + y < ysz; ++i) {
-              if(picture[y+i][x]=='W') {
-                result = min(result, i-1);
-                break;
-              }
+    vector<string> b(h, string(w, 'W'));
+    TIMES(y, h - s + 1) {
+      TIMES(x, w - s +1) {
+        bool ok = true;
+        TIMES(yy, s) {
+          TIMES(xx, s) {
+            if(pic[y + yy][x + xx] != 'B') {
+              ok = false;
+              break;
             }
           }
-          if(x != xsz - 1 && picture[y][x+1] != 'W') {
-            result = min(result, xsz - x - 1);
-            for(int i = 1; i + x < xsz; ++i) {
-              if(picture[y][x+i]=='W') {
-                result = min(result, i-1);
-                break;
-              }
-            }
+        }
+        if(!ok) continue;
+
+        TIMES(yy, s) {
+          TIMES(xx, s) {
+            b[y + yy][x + xx] = 'B';
           }
         }
       }
     }
+
+    DUMP(s);
+    DUMP(b);
     
-    return result;	
+    TIMES(y, h) {
+      TIMES(x, w) {
+        if(pic[y][x] != b[y][x]) return false;
+      }
+    }
+    return true;
+  }
+  
+  int largestBrush(vector <string> picture)
+  {
+    pic = picture;
+
+    w = picture[0].size();
+    h = picture.size();
+    
+    DOWNTO(s, min(w, h), 2) {
+
+      if(paint(s)) return s;
+    }
+    
+    return 1;	
   }
 
 // BEGIN CUT HERE
@@ -114,7 +118,7 @@ class Painting {
 
 The picture will be painted on an NxM sheet of white paper consisting of 1x1 squares. Its rows are numbered from 0 to N-1 and the columns are numbered from 0 to M-1. The cell in row i, column j is denoted as (i, j).
 
-Of course, Mr. Grey already has a picture plan in his mind. It is given in a vector <string> picture, which contains exactly N elements, where each element contains exactly M characters. „Rharacter j in element i of picture will be 'B' if the cell (i, j) must be painted black, and it will be 'W' if this cell must be left white.
+Of course, Mr. Grey already has a picture plan in his mind. It is given in a vector <string> picture, which contains exactly N elements, where each element contains exactly M characters. ?haracter j in element i of picture will be 'B' if the cell (i, j) must be painted black, and it will be 'W' if this cell must be left white.
 
 Mr. Grey has a lot of black paint, but unfortunately he doesn't have a brush, so he went to a local shop to buy one. The shop offers square brushes of different sizes. More exactly, for each positive integer S, one can buy an SxS brush in the shop. Using an SxS brush, Mr. Grey will be able to paint entirely black SxS squares on the sheet of paper. In other words, he can choose row R and column C such that 0 <= R <= N - S, 0 <= C <= M - S, and then paint all cells (r, c) such that R <= r < R + S and C <= c < C + S in black paint. He can repeat this operation infinitely many times. If a cell must be black according to picture, it may be painted black several times. However, if a cell must be white, then it must never be painted black.
 

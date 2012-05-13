@@ -51,27 +51,24 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class ColorfulRabbits {
+class EventOrder {
 
  public:
-  int getMinimum(vector <int> replies)
+  typedef long long ll;
+  static const ll MOD = 1000000009;
+  
+  int getCount(int lE, int iE)
   {
-    int result = 0;
+    vector< vector<ll> > dp(iE + 1, vector<ll>(iE + 1, 0) );
+
+    UPTO(i, 1, iE) {
+      UPTO(y, 1, iE) {
+        dp[i][y] = dp[i - 1][y] + dp[i - 1][y - 1] + 1;
+      }
+    }
+    
+    int result;
     // -- main code --
-
-    map<int, int> count;
-
-    TIMES(i, replies.size()) {
-      int r = replies[i];
-      if(count.find(r) == count.end()) count[r] = 0;
-      ++count[r];
-    }
-
-    EACH(count, it) {
-      int r = it->first;
-      int c = it->second;
-      result += c % (r + 1) == 0 ? c : (1 + c / (r + 1)) * (r + 1);
-    }
     
     return result;	
   }
@@ -82,54 +79,70 @@ class ColorfulRabbits {
   }
 /*
 // PROBLEM STATEMENT
-// Cat Pochi visited a town of rabbits and asked some of the rabbits the following question: 
-"How many rabbits in this town other than yourself have the same color as you?". 
-The rabbits all replied truthfully, and no rabbit was asked the question more than once. 
-You are given the rabbits' replies in the vector <int> replies. 
-Return the minimum possible number of rabbits in this town. 
+// 
+We are given a set of events. Each of the events is unique. Some events are long, each of these may take any positive amount of time. Different long events may take different amounts of time. The other events are instant, each of these happens instantly at some moment in time.
+
+
+We want to arrange the events into a schedule. We do not care about exact times when the events take place, we only consider their relative order. For example, given long events A and B and an instant event C, one of the possible schedules looks as follows:
+
+
+Event A starts.
+Event B starts.
+Event B ends and at the same time event C happens.
+Event A ends.
+
+
+
+You are given an int longEvents and an int instantEvents. 
+Let X be the total number of distinct schedules with exactly longEvents long and instantEvents instant events.
+Your method should return the value (X modulo 1,000,000,009).
 
 
 DEFINITION
-Class:ColorfulRabbits
-Method:getMinimum
-Parameters:vector <int>
+Class:EventOrder
+Method:getCount
+Parameters:int, int
 Returns:int
-Method signature:int getMinimum(vector <int> replies)
+Method signature:int getCount(int longEvents, int instantEvents)
 
 
 CONSTRAINTS
--replies will contain between 1 and 50 elements, inclusive. 
--Each element of replies will be between 0 and 1,000,000, inclusive. 
+-longEvents will be between 0 and 1000, inclusive.
+-instantEvents will be between 0 and 1000, inclusive.
+-At least one of longEvents and instantEvents will be positive.
 
 
 EXAMPLES
 
 0)
-{ 1, 1, 2, 2 }
+0
+2
 
+Returns: 3
+
+If we label the events A and B, then the three schedules are "A before B", "both at the same time", and "A after B".
+
+1)
+1
+1
 
 Returns: 5
 
-If there are 2 rabbits with a color and 3 rabbits with another color, 
-Pochi can get this set of replies. 
-
-
-
-
-1)
-{ 0 }
-
-
-Returns: 1
-
-A poor lonely rabbit. 
-
+If we label the long event A and the instant event B, then the five schedules are "B before A starts", "B when A starts", "B during A", "B when A ends", and "B after A".
 
 2)
-{ 2, 2, 44, 2, 2, 2, 444, 2, 2 }
+2
+0
 
+Returns: 13
 
-Returns: 499
+There are 6 schedules in which no two endpoints of events coincide, 2 schedules when one event starts when the other one ends, 2 schedules with the same beginning and different end, 2 with same end and different beginning, and 1 when the events start and end at the same time.
+
+3)
+0
+4
+
+Returns: 75
 
 
 
@@ -139,16 +152,14 @@ Returns: 499
   
 // BEGIN CUT HERE
 	public:
-	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); }
+	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
 	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { int Arr0[] = { 1, 1, 2, 2 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 5; verify_case(0, Arg1, getMinimum(Arg0)); }
-	void test_case_1() { int Arr0[] = { 0 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 1; verify_case(1, Arg1, getMinimum(Arg0)); }
-	void test_case_2() { int Arr0[] = { 2, 2, 44, 2, 2, 2, 444, 2, 2 }
-; vector <int> Arg0(Arr0, Arr0 + (sizeof(Arr0) / sizeof(Arr0[0]))); int Arg1 = 499; verify_case(2, Arg1, getMinimum(Arg0)); }
+	void test_case_0() { int Arg0 = 0; int Arg1 = 2; int Arg2 = 3; verify_case(0, Arg2, getCount(Arg0, Arg1)); }
+	void test_case_1() { int Arg0 = 1; int Arg1 = 1; int Arg2 = 5; verify_case(1, Arg2, getCount(Arg0, Arg1)); }
+	void test_case_2() { int Arg0 = 2; int Arg1 = 0; int Arg2 = 13; verify_case(2, Arg2, getCount(Arg0, Arg1)); }
+	void test_case_3() { int Arg0 = 0; int Arg1 = 4; int Arg2 = 75; verify_case(3, Arg2, getCount(Arg0, Arg1)); }
 
 // END CUT HERE
 
@@ -159,7 +170,7 @@ Returns: 499
 int main(int argc, char *argv[])
 {
   
-  ColorfulRabbits test;
+  EventOrder test;
 
   if(argc == 1) {
     test.run_test(-1);

@@ -54,12 +54,50 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 class WhiteSpaceEditing {
 
  public:
+  vector<int> lines;
+  vector<int> lengths;
+  int n;
+
+  int mem[51][51][51][2];
+
+  int f(int a, int b, int current, int lengthDecided)
+  {
+    int& res = mem[a][b][current][lengthDecided];
+    if(res >= 0) return res;
+
+    if(a == b - 1) {
+      res = abs(lengths[current] - lines[a]);
+      return res;
+    }
+
+    res = INT_MAX;
+
+    if(lengthDecided == 0) {
+      FOR(i, 0, n + 1) {
+        int cost = abs(lengths[current] - lengths[i]);
+        res = min(res, f(a, b, i, 1) + cost);
+      }
+    } else {
+      FOR(c, a+1, b) {
+        int top = f(a, c, current, 0);
+        int bottom = f(c, b, current, 0);
+        res = min(res, top + bottom);
+      }
+    }
+    return res;
+  }
+  
   int getMinimum(vector <int> lines)
   {
-    int result;
-    // -- main code --
+    this->lines = lines;
+    this->lengths = lines;
+    this->lengths.push_back(0);
+
+    n = lines.size();
+
+    memset(mem, -1, sizeof(mem));
     
-    return result;	
+    return f(0, n, n, 0) + n - 1;	
   }
 
 // BEGIN CUT HERE
