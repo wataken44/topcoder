@@ -56,16 +56,29 @@ class FoxPlayingGame {
  public:
   double theMax(int nA, int nB, int paramA, int paramB)
   {
-    // -- main code --
+    double sA = paramA / 1000.0;
+    double sB = paramB / 1000.0;
 
-    double sA = nA * paramA / 1000.0;
-    double result = sA;
+    vector< vector< double > > dp0(nA + 1, vector<double>(nB + 1, 0));
+    vector< vector< double > > dp1(nA + 1, vector<double>(nB + 1, 0));
 
-    UPTO(b, 0, nB) {
-      result = max(result, sA * pow(paramB / 1000.0, b));
+    UPTO(a, 1, nA) {
+      dp0[a][0] = dp0[a-1][0] + sA;
+      dp1[a][0] = dp1[a-1][0] + sA;
     }
-    
-    return result;	
+
+    UPTO(a, 1, nA) {
+      UPTO(b, 1, nB) {
+        dp0[a][b] = max(dp0[a - 1][b] + sA, dp0[a][b - 1] * sB);
+        dp0[a][b] = max(dp0[a][b], dp1[a - 1][b] + sA);
+        dp0[a][b] = max(dp0[a][b], dp1[a][b - 1] * sB);
+        dp1[a][b] = min(dp0[a - 1][b] + sA, dp0[a][b - 1] * sB);
+        dp1[a][b] = min(dp1[a][b], dp1[a - 1][b] + sA);
+        dp1[a][b] = min(dp1[a][b], dp1[a][b - 1] * sB);
+      }
+    }
+
+    return max(dp0[nA][nB], dp1[nA][nB]);	
   }
 
 // BEGIN CUT HERE
