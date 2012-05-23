@@ -1,5 +1,5 @@
 #TopCoder ContestApplet Preferences File
-#Tue May 22 22:45:47 JST 2012
+#Wed May 23 20:12:03 JST 2012
 com.topcoder.client.contestApplet.common.LocalPreferences.menufont=Arial
 com.topcoder.client.contestApplet.common.LocalPreferences.menufontsize=10
 com.topcoder.client.contestApplet.common.LocalPreferences.commonclasspath=/Users/wataken44/Documents/topcoder/bin/TZTester.jar\:/Users/wataken44/Documents/topcoder/bin/FileEdit.jar\:/Users/wataken44/Documents/topcoder/bin/CodeProcessor.jar

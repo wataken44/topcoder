@@ -54,13 +54,47 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 class TableSeating {
 
  public:
+  vector<int> probs;
+  int psz;
+  int numTables;
+
+  vector<double> memo;
+  
   double getExpected(int numTables, vector <int> probs)
   {
+    this->probs = probs;
+    this->psz = probs.size();
+    this->numTables = numTables;
 
-    double result;
+    memo = vector<double>(numTables + 1, -2.0);
+    memo[0] = 0;
+    
+    double result = go(numTables);
     // -- main code --
+
+    DUMP(memo);
     
     return result;	
+  }
+
+  double go(int n)
+  {
+    double& ret = memo[n];
+    if(ret >= 0) return ret;
+
+    ret = 0;
+
+    TIMES(i, psz) {
+      int req = i + 1;
+      if(req > n) continue;
+
+      double p = probs[i] * 0.01 / (n - req + 1);
+
+      for(int k = 0; k + req <= n; ++k) {
+        ret += p * (req + go(k) + go(n - (k + req)));
+      }
+    }
+    return ret;
   }
 
 // BEGIN CUT HERE
