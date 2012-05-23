@@ -54,27 +54,89 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 class LargestGap {
 
  public:
-  string remove(string& original, int i)
-  {
-    string r;
-    
-  }
+  struct Info {
+    int x;
+    int l;
+    int r;
+    Info(int x_, int l_, int r_) : x(x_), l(l_), r(r_) {};
+  };
 
   int getLargest(vector <string> board)
   {
-    int result = INT_MAX;
-    // -- main code --
+    string b;
 
-    string b = "";
     TIMES(i, board.size()) {
       b += board[i];
     }
 
-    TIMES(i, b.size()) {
-      
+    int len  = b.size();
+    
+    string bb = b;
+
+    
+    vector<Info> cand;
+
+    TIMES(i, bb.size()) {
+      if(bb[i] == 'X') {
+        
+        bb[i] = 'v';
+
+        int r = i;
+        while(bb[(r + 1) % len] == 'X') {
+          r = (r + 1) % len;
+          bb[r] = 'v';
+        }
+
+        int l = i;
+        while(bb[(l - 1 + len) % len] == 'X') {
+          l = (l - 1 + len) % len;
+          bb[l] = 'v';
+        }
+
+        cand.push_back(Info(i, l, r));
+      }
+    }
+
+    TIMES(k, cand.size()) {
+      //DUMP(cand[k].x);DUMP(cand[k].l);DUMP(cand[k].r);
     }
     
-    return result;	
+    int mx = cand[0].x;
+    int mg = -1;
+    int sg = -2;
+    
+    int csz = cand.size();
+    TIMES(k, csz) {
+      Info& li = cand[k];
+      Info& mi = cand[(k + 1) % csz];
+      Info& ri = cand[(k + 2) % csz];
+
+      DUMP(ri.l);DUMP(li.r);DUMP(mi.r);DUMP(mi.l);
+                                                            
+      int g = ((ri.l - li.r - 1) - (mi.r - mi.l + 1) + len * 2) % len;
+      // DUMP(g);
+
+      int s = -2;
+      TIMES(y, csz) {
+        if(y == k || y == (k + 1) %csz) continue;
+        s = max(s, cand[(y + 1) % csz].l - cand[y].r - 1);
+      }
+
+      DUMP(g);DUMP(s);
+      
+      if(g > mg) {
+        mx = mi.x;
+        mg = g;
+        sg = s;
+      }else if(g == mg && s > sg) {
+        mx = mi.x;
+        mg = g;
+        sg = s;
+      }
+    }
+    // -- main code --
+    
+    return mx;	
   }
 
 // BEGIN CUT HERE

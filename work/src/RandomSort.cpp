@@ -54,67 +54,73 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 class RandomSort {
 
  public:
-
-  typedef long long ll;
-  ll getKey(vector<int>& v)
-  {
-    ll k = 0;
-    TIMES(i, v.size()) {
-      k = k * 10 + v[i];
-    }
-    return k;
-  }
-
-  map<ll, double> memo;
+  map<int, double> memo;
+  int sz;
+  vector<int> base;
   
   double getExpected(vector <int> permutation)
   {
     memo.clear();
-    return go(permutation);
-  }
 
-  double go(vector <int> permutation)
-  {
-    ll key = getKey(permutation);
-
-    if(memo.find(key) != memo.end()) {
-      return memo[key];
+    base.clear();
+    int c = 1;
+    TIMES(u, 9) {
+      base.push_back(c);
+      c *= 10;
     }
+
+    reverse(permutation.begin(), permutation.end());
+
+    sz = permutation.size();
     
-    double result = 0;
+    int perm = 0;
+    
+    TIMES(i, sz) {
+      perm = 10 * perm + permutation[i];
+    }
+
+    double result = go(perm);
     // -- main code --
-
-    int sz = permutation.size();
-
-    int count = 0;
-    TIMES(i, sz) {
-      FOR(j, i+1, sz) {
-        if(permutation[i] > permutation[j]) {
-          ++count;
-        }
-      }
-    }
-
-    if(count == 0) {
-      memo[key] = 0;
-      return 0.0;
-    }
-
-    TIMES(i, sz) {
-      FOR(j, i+1, sz) {
-        if(permutation[i] > permutation[j]) {
-          vector<int>& next = permutation;
-          swap(next[i], next[j]);
-          result += (1.0 + go(next)) / count;
-          swap(next[i], next[j]);
-        }
-      }
-    }
-
-    memo[key] = result;
+    
     return result;	
   }
 
+  double go(int perm)
+  {
+    if(memo.find(perm) != memo.end()) return memo[perm];
+
+    int c = 0;
+    TIMES(i, sz) {
+      FOR(j, i + 1, sz) {
+        if(at(perm, i) > at(perm, j)) ++c;
+      }
+    }
+
+    double ret = 0;
+
+    TIMES(i, sz) {
+      FOR(j, i + 1, sz) {
+        if(at(perm, i) > at(perm, j)) {
+          ret += 1.0 / c * (1 + go(swap(perm, i, j)));
+        }
+      }
+    }
+
+    memo[perm] = ret;
+    return memo[perm];
+  }
+
+  int at(int perm, int n) {
+    return (perm / base[n]) % 10;
+  }
+
+  int swap(int perm, int i, int j) {
+    int ni = at(perm, i);
+    int nj = at(perm, j);
+
+    return perm + ni * (base[j] - base[i]) + nj * (base[i] - base[j]);
+  }
+  
 // BEGIN CUT HERE
   void debug()
   {
