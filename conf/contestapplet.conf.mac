@@ -1,5 +1,5 @@
 #TopCoder ContestApplet Preferences File
-#Wed May 23 20:12:03 JST 2012
+#Tue May 29 22:42:21 JST 2012
 com.topcoder.client.contestApplet.common.LocalPreferences.menufont=Arial
 com.topcoder.client.contestApplet.common.LocalPreferences.menufontsize=10
 com.topcoder.client.contestApplet.common.LocalPreferences.commonclasspath=/Users/wataken44/Documents/topcoder/bin/TZTester.jar\:/Users/wataken44/Documents/topcoder/bin/FileEdit.jar\:/Users/wataken44/Documents/topcoder/bin/CodeProcessor.jar
@@ -161,13 +161,13 @@ com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatQuestionFore=-16
 com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatSpeakerFore=-1
 com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatSpeakerBack=-16777216
 com.topcoder.client.contentApplet.panels.ChatPanel.moderatedChatQuestionBack=-16777216
-com.topcoder.jmaContestApplet.frames.codingframe.location=135\:164
+com.topcoder.jmaContestApplet.frames.codingframe.location=676\:181
 com.topcoder.jmaContestApplet.frames.codingframe.size=510\:766
 com.topcoder.jmaContestApplet.frames.codingframe.dividerloc=272
 com.topcoder.jmaContestApplet.frames.statementViewer.location=377\:376
 com.topcoder.jmaContestApplet.frames.statementViewer.size=760\:360
-com.topcoder.jmaContestApplet.frames.sourceViewer.location=758\:267
-com.topcoder.jmaContestApplet.frames.sourceViewer.size=522\:757
+com.topcoder.jmaContestApplet.frames.sourceViewer.location=1155\:269
+com.topcoder.jmaContestApplet.frames.sourceViewer.size=645\:810
 com.topcoder.jmaContestApplet.frames.sourceViewer.dividerloc=117
 com.topcoder.jmaContestApplet.ContestApplet.disableEnterExitMsgs=true
 fileeditor.config.dirName=/Users/wataken44/Documents/topcoder/work/src
