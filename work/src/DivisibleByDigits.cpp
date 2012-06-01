@@ -51,31 +51,61 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class NoRepeatPlaylist {
+class DivisibleByDigits {
 
  public:
-  int numPlaylists(int N, int M, int P)
+  typedef long long ll;
+  
+  long long getContinuation(int n)
   {
+    // -- main code --
+    ll nl = nlcm(n);
+
+    ll b = 1;
     
-    typedef long long ll;
-    const ll MOD = 1000000007;
+    while(true) {
+      ll lb = n * b;
+      ll ub = (n + 1) * b - 1;
 
-    vector< vector<ll> > dp(1 + P, vector<ll>(N + 1, 0));
+      ll ld = lb / nl;
+      ll c = nl * (lb % nl == 0 ? ld : ld + 1);
 
-    dp[0][N] = 1 % MOD;
-
-    UPTO(p, 1, P) {
-      DOWNTO(n, N, 0) {
-        dp[p][n] = (dp[p - 1][n] * max(N - n - M, 0)) % MOD;
-        if(n == N) continue;
-        dp[p][n] = (dp[p][n] + (dp[p - 1][n + 1] * (n + 1)) % MOD) % MOD;
+      //DUMP(lb);DUMP(ub);DUMP(c);
+      if(c <= ub) {
+        return c;
       }
+      b *= 10;
     }
     
-    int result = dp[P][0];
+    long long result = -1;
     
     return result;	
   }
+
+  ll nlcm(int n)
+  {
+    ll r = 1;
+    while(n > 0) {
+      ll k = n % 10;
+      n /= 10;
+      if(k == 0) continue;
+      r = r * k / gcd(r, k);
+    }
+    return r;
+  }
+  
+  template<typename T>
+  T gcd(T a, T b)
+  {
+    if(a > b) swap(a, b);
+    while(a != 0) {
+      T t = b % a;
+      b = a;
+      a = t;
+    }
+    return b;
+  }
+
 
 // BEGIN CUT HERE
   void debug()
@@ -83,87 +113,66 @@ class NoRepeatPlaylist {
   }
 /*
 // PROBLEM STATEMENT
-// Michael loves listening to music from his cell phone while travelling by train. He currently has N songs in his cell phone. During one trip he has the time to listen to P songs. So his cell phone creates a playlist of P (not necessarily different) songs according to the following rules:
-
-Each song has to be played at least once.
-At least M songs have to be played between any two occurrences of the same song. (This ensures that the playlist is not playing the same song too often.)
-
-Michael wonders how many different playlists his cell phone can create. You are given the ints N, M, and P. Let X be the number of valid playlists. Since X can be too large, your method must compute and return the value (X modulo 1,000,000,007).
+// Given an integer n, find the smallest integer that starts with n and is divisible by every non-zero digit of n (all in decimal notation).
 
 DEFINITION
-Class:NoRepeatPlaylist
-Method:numPlaylists
-Parameters:int, int, int
-Returns:int
-Method signature:int numPlaylists(int N, int M, int P)
+Class:DivisibleByDigits
+Method:getContinuation
+Parameters:int
+Returns:long long
+Method signature:long long getContinuation(int n)
 
 
 NOTES
--Two playlists A and B are different if for some i between 1 and P, inclusive, the i-th song in A is different from the i-th song in B.
+-An integer A starts with an integer B if the string representation of B is a prefix of the string representation of A (both in decimal notation with no leading zeroes).
 
 
 CONSTRAINTS
--N will be between 1 and 100, inclusive.
--M will be between 0 and N, inclusive.
--P will be between N and 100, inclusive.
+-n will be between 1 and 1000000000, inclusive.
 
 
 EXAMPLES
 
 0)
-1
-0
-3
+13
 
-Returns: 1
+Returns: 132
 
-You have only 1 song which can be played as often as you want. 
-So the only valid playlist is: {song1, song1, song1}.
+We need a number that starts with 13 and is divisible by 1 (always true) and by 3. The smallest one is 132.
+
 
 1)
-1
-1
-3
+648
 
-Returns: 0
+Returns: 648
 
-Now is the same scenario as in Example 0, but the song cannot be played 2 times in a row. 
-Thus there is no valid playlist.
+If n is divisible by all its non-zero digits, the answer to the problem is n itself.
 
 2)
-2
-0
-3
+566
 
-Returns: 6
+Returns: 56610
 
-Now you have 2 songs and you can play them as often as you want. 
-Just remember that playlists {song1, song1, song1} and {song2, song2, song2} are not valid, because each song must be played at least once.
+The resulting number must be divisible by 5, so it should end either with 0 or with 5. But a number ending with 5 is odd and can't be divisible by 6. So the last digit of the answer must be 0. In order to make the number divisible by 6, we need to put something before this 0, and the smallest appropriate digit is 1.
 
 3)
-4
-0
-4
+1000000000
 
-Returns: 24
+Returns: 1000000000
 
-You have time to play each song exactly once. So there are 4! possible playlists.
+
 
 4)
-2
-1
-4
+987654321
 
-Returns: 2
+Returns: 987654321360
 
-The only two possibilities are {song1, song2, song1, song2} and {song2, song1, song2, song1}.
+
 
 5)
-50
-5
-100
+83
 
-Returns: 222288991
+Returns: 8304
 
 
 
@@ -176,13 +185,13 @@ Returns: 222288991
 	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); if ((Case == -1) || (Case == 4)) test_case_4(); if ((Case == -1) || (Case == 5)) test_case_5(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
-	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { int Arg0 = 1; int Arg1 = 0; int Arg2 = 3; int Arg3 = 1; verify_case(0, Arg3, numPlaylists(Arg0, Arg1, Arg2)); }
-	void test_case_1() { int Arg0 = 1; int Arg1 = 1; int Arg2 = 3; int Arg3 = 0; verify_case(1, Arg3, numPlaylists(Arg0, Arg1, Arg2)); }
-	void test_case_2() { int Arg0 = 2; int Arg1 = 0; int Arg2 = 3; int Arg3 = 6; verify_case(2, Arg3, numPlaylists(Arg0, Arg1, Arg2)); }
-	void test_case_3() { int Arg0 = 4; int Arg1 = 0; int Arg2 = 4; int Arg3 = 24; verify_case(3, Arg3, numPlaylists(Arg0, Arg1, Arg2)); }
-	void test_case_4() { int Arg0 = 2; int Arg1 = 1; int Arg2 = 4; int Arg3 = 2; verify_case(4, Arg3, numPlaylists(Arg0, Arg1, Arg2)); }
-	void test_case_5() { int Arg0 = 50; int Arg1 = 5; int Arg2 = 100; int Arg3 = 222288991; verify_case(5, Arg3, numPlaylists(Arg0, Arg1, Arg2)); }
+	void verify_case(int Case, const long long &Expected, const long long &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
+	void test_case_0() { int Arg0 = 13; long long Arg1 = 132LL; verify_case(0, Arg1, getContinuation(Arg0)); }
+	void test_case_1() { int Arg0 = 648; long long Arg1 = 648LL; verify_case(1, Arg1, getContinuation(Arg0)); }
+	void test_case_2() { int Arg0 = 566; long long Arg1 = 56610LL; verify_case(2, Arg1, getContinuation(Arg0)); }
+	void test_case_3() { int Arg0 = 1000000000; long long Arg1 = 1000000000LL; verify_case(3, Arg1, getContinuation(Arg0)); }
+	void test_case_4() { int Arg0 = 987654321; long long Arg1 = 987654321360LL; verify_case(4, Arg1, getContinuation(Arg0)); }
+	void test_case_5() { int Arg0 = 83; long long Arg1 = 8304LL; verify_case(5, Arg1, getContinuation(Arg0)); }
 
 // END CUT HERE
 
@@ -193,7 +202,7 @@ Returns: 222288991
 int main(int argc, char *argv[])
 {
   
-  NoRepeatPlaylist test;
+  DivisibleByDigits test;
 
   if(argc == 1) {
     test.run_test(-1);

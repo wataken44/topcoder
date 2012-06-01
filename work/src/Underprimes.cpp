@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <bitset>
 #include <cfloat>
 #include <climits>
 #include <cmath>
@@ -54,49 +55,46 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 class Underprimes {
 
  public:
+
+  
   int howMany(int A, int B)
   {
-    const int N = B + 20;
+    // -- main code --
+    const int N = 100003;
     vector<bool> sieve(N, true);
-
     sieve[0] = false;
     sieve[1] = false;
 
+
     for(int i = 2; i * i <= N; ++i) {
-      if(!sieve[i]) continue;
-      for(int j = 2; j * i < N; ++j) {
+      if(sieve[i] == false) continue;
+      for(int j = 2; j * i < N ; ++j) {
         sieve[j * i] = false;
       }
     }
 
     vector<int> prime;
-    TIMES(i, N) {
+    for(int i = 2; i < N ; ++i) {
       if(sieve[i]) prime.push_back(i);
     }
 
-    
     int result = 0;
-    // -- main code --
 
-    UPTO(i, A, B) {
-      if(sieve[i]) continue;
+    UPTO(k, A, B) {
+      if(sieve[k]) continue;
 
+      int kk = k;
+      int a = 0;
       int c = 0;
-      int n = i;
-      int k = 0;
-      while(n > 1) {
-        int p = prime[k];
-        if(n % p == 0) {
-          while(n % p == 0) {
-            ++c;
-            n /= p;
-          }
-        }else {
-          k += 1;
+      while(kk > 1) {
+        int p = prime[a];
+        while(kk % p == 0) {
+          ++c;
+          kk /= p;
         }
+        ++a;
       }
       if(sieve[c]) ++result;
-                                
     }
     
     return result;	
