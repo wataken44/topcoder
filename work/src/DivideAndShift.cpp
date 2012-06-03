@@ -1,117 +1,107 @@
+#include <algorithm>
+#include <cfloat>
+#include <climits>
+#include <cmath>
+#include <complex>
 #include <cstdio>
 #include <cstdlib>
-#include <cmath>
-#include <climits>
-#include <cfloat>
-#include <map>
-#include <utility>
-#include <set>
-#include <iostream>
-#include <memory>
-#include <string>
-#include <vector>
-#include <list>
-#include <algorithm>
 #include <functional>
-#include <sstream>
-#include <complex>
-#include <stack>
+#include <iostream>
+#include <list>
+#include <map>
+#include <memory>
 #include <queue>
+#include <set>
+#include <sstream>
+#include <stack>
+#include <string>
+#include <utility>
+#include <vector>
 
 typedef int int_type;
 
 // -- utility --
 // C-style loop
 #define FOR(x, a, b) for(int_type x = static_cast<int_type>(a); x < static_cast<int_type>(b); ++x)
-#define FORN(x, n) FOR(x, 0, n)
 // Ruby-style loop
 #define TIMES(x, n) FOR(x, 0, n)
 #define STEP(x, a, b, s) for(int_type x = static_cast<int_type>(a); s > 0 ? x <= static_cast<int_type>(b) : x >= static_cast<int_type>(b); x += static_cast<int_type>(s) )
 #define UPTO(x, a, b) for(int_type x = static_cast<int_type>(a); x <= static_cast<int_type>(b); ++x)
 #define DOWNTO(x, a, b) for(int_type x = static_cast<int_type>(a); x >= static_cast<int_type>(b); --x)
-// debug
-#define DUMP(x) std::cerr << #x << " = " << x << std::endl;
+#define EACH(c, i) for(__typeof((c).begin()) i = (c).begin(); i != (c).end(); ++i)
+#define ALL(cont, it, cond, ret) \
+  bool ret = true; EACH(cont, it) { if(!(cond)) {ret=false;break;} }
+#define ANY(cont, it, cond, ret) \
+  bool ret = false; EACH(cont, it) { if(cond) {ret=true;break;} }
 
 using namespace std;
+// debug
+// BEGIN CUT HERE
+#define DUMP(x) std::cerr << #x << " = " << to_s(x) << std::endl;
+template<typename T> string to_s(const T& v);
+template<> string to_s(const string& v);
+template<> string to_s(const bool& v);
+template<typename T> string to_s(const vector<T>& v);
+template<typename T> string to_s(const list<T>& v);
+template<typename T> string to_s(const set<T>& v);
+template<typename F, typename S> string to_s(const pair<F,S>& v);
+template<typename K, typename V> string to_s(const map<K,V>& v);
+// END CUT HERE
+#ifndef DUMP
+#define DUMP(x) 
+#endif
 
 class DivideAndShift {
 
  public:
-  map<int, vector<int> > div;
-  
+  vector<bool> sieve;
+  vector<int> prime;
+  static const int NN = 1000007;
+
   int getLeast(int N, int M)
   {
-    int result = go(N, M);
-
     // -- main code --
+    sieve = vector<bool>(NN, true);
+    sieve[0] = false;
+    sieve[1] = false;
 
-    div.clear();
-    
-    return result;
-  }
-
-  int go(int N, int M) {
-    
-    if(M == 1 or N == 1) {
-      return 0;
-    }else if(M == N) {
-      return 1;
-    }
-
-    //DUMP(N); DUMP(M);
-
-    if(div.find(N) == div.end()) { 
-      int d = 2;
-      int n = N;
-
-      div[N] = vector<int>();
-      
-      while(n >= d) {
-        if(n % d == 0) {
-          if(div[N].size() == 0 or div[N].back() != d) {
-            div[N].push_back(d);
-            //DUMP(d);
-          }
-          n = n / d;
-        }else {
-          ++d;
-        }
-      }
-    }
-    
-    int count = INT_MAX;
-
-    // divide
-    TIMES(i, div[N].size()) {
-      int nn = N / div[N][i];
-      //DUMP(N);DUMP(nn);
-      //DUMP(div[N][i]);
-      if(nn != 1) {
-        int mm = (M % nn + i) % nn;
-        if(mm != 0) {
-          count = min(count, 1 + go(nn, mm));
-          count = min(count, 2 + go(nn, mm+1));
-          if(mm!=1) {
-            count = min(count, 2 + go(nn, mm-1));
-          }else {
-            count = min(count, 2 + go(nn, nn));
-          }
-        }else {
-          count = min(count, 1 + go(nn, nn));
-        }
-      }else {
-        count = 1;
+    for(int i = 2; i * i <= NN; ++i) {
+      if(sieve[i] == false) continue;
+      for(int j = 2; i * j < NN ; ++j) {
+        sieve[i * j ] = false;
       }
     }
 
-    // shift right
-    // count = min(count, 1 + abs(N - M));
-    //
-    //count = min(count, M - 1);
+    prime.clear();
+    for(int i = 2; i < NN; ++i) {
+      if(sieve[i] && N % i == 0) prime.push_back(i);
+    }
 
-    return count;
+    return solve(N, M);	
   }
-  
+
+  int solve(int N, int M)
+  {
+    if(M == 1) return 0;
+
+    int psz = prime.size();
+
+    int r = min(M - 1, N - M + 1);
+
+    // DUMP(N);DUMP(M);DUMP(r);
+    
+    FOR(i, 0, psz) {
+      int p = prime[i];
+      if(p > N) break;
+      if(N % p != 0) continue;
+      int nn = N / p;
+      r = min(r, 1 + solve(nn, M % nn == 0 ? nn : M % nn));
+      // DUMP(nn);DUMP(p);DUMP(r);
+    }
+    
+    return r;
+  }
+
 // BEGIN CUT HERE
   void debug()
   {
@@ -155,7 +145,7 @@ Returns: 3
 One possible way to obtain the object in slot 14 is to perform the following operations:
 1. Divide by 2. N becomes equal to 28 now.
 2. Shift right. The object moves to slot 15.
-3.?Divide?by?2?again.?The?sequence?15..28?is?kept,?renumbered?as?1..14?and?the?object?appears?in?slot?1.
+3. Divide by 2 again. The sequence 15..28 is kept, renumbered as 1..14 and the object appears in slot 1.
 
 
 1)
@@ -172,7 +162,7 @@ Manao divides by 7 twice and gets a single slot.
 
 Returns: 6
 
-Shift?left?until?the?object?is?in?slot?1.
+Shift left until the object is in slot 1.
 
 3)
 6
@@ -230,5 +220,14 @@ int main(int argc, char *argv[])
   
   return 0;
 }
+
+template<typename T> string to_s(const T& v) { ostringstream oss; oss << v; return oss.str(); }
+template<> string to_s(const string& v) { ostringstream oss; oss << '"' << v << '"'; return oss.str(); }
+template<> string to_s(const bool& v) { ostringstream oss; oss << ( v ? "true" : "false") ; return oss.str(); } 
+template<typename T> string to_s(const vector<T>& v) { ostringstream oss; oss << "["; EACH(v,i) oss << to_s(*i) << ","; oss << "]"; return oss.str(); }
+template<typename T> string to_s(const list<T>& v) { ostringstream oss; oss << "("; EACH(v,i) oss << to_s(*i) << ","; oss << ")"; return oss.str(); }
+template<typename T> string to_s(const set<T>& v) { ostringstream oss; oss << "{"; EACH(v,i) oss << to_s(*i) << ","; oss << "}"; return oss.str(); }
+template<typename F, typename S> string to_s(const pair<F,S>& v) { ostringstream oss; oss << "<" << to_s(v.first) << " " << to_s(v.second) << ">"; return oss.str(); }
+template<typename K, typename V> string to_s(const map<K,V>& v) { ostringstream oss; oss << "{"; EACH(v,i) oss << to_s(i->first) << " => " << to_s(i->second) << ","; oss << "}"; return oss.str(); }
 
 // END CUT HERE

@@ -51,36 +51,32 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class TheNumbersWithLuckyLastDigit {
+class BirthdayOdds {
 
  public:
-  int find(int n)
+  double prob(int n, int d)
+  {
+    double p = 1.0;
+    TIMES(i, n) {
+      p *= 1.0 * (1 - i) / d;
+    }
+    return 1 - p;
+  }
+
+  int minPeople(int minOdds, int daysInYear)
   {
     // -- main code --
-    vector< pair<int, int> > mp(10, make_pair(100000, 100000));
 
-    TIMES(a, 100) {
-      TIMES(b, 100) {
-        if(a + b == 0) continue;
-        int s = a * 4 + b * 7;
-        pair<int,int>& r = mp[s % 10];
-        if(r.first + r.second > a + b) {
-          r = make_pair(a, b);
-        }else if(r.first + r.second == a + b) {
-          if(r.first * 4 + r.second * 7 > a * 4 + b * 7) {
-            r = make_pair(a, b);
-          }
-        }
+    double p = 1.0;
+    FOR(i, 1, daysInYear * 10) {
+      p *= (daysInYear + 1.0 - i) / daysInYear;
+      if((1 - p) * 100 >= minOdds) {
+        return i;
       }
+
     }
 
-    int d = n % 10;
-    pair<int, int>& p = mp[d];
-    if(n >= p.first * 4 + p.second * 7) {
-      return p.first + p.second;
-    }else {
-      return -1;
-    }
+    return 0;
   }
 
 // BEGIN CUT HERE
@@ -89,54 +85,66 @@ class TheNumbersWithLuckyLastDigit {
   }
 /*
 // PROBLEM STATEMENT
-// 
-John believes that the digits 4 and 7 are lucky, and all other digits are unlucky.
-A positive integer is called a lucky number if its last digit is lucky.
-For example, 4, 14 and 207 are lucky numbers, while 40, 741 and 3 are not lucky numbers.
-John would like to represent the int n as a sum of only lucky numbers, and he would like to do this using the minimal possible number of summands.
-Return the number of summands in the representation, or -1 if it is impossible to achieve the goal.
-
-
+// Here is an interesting factoid:  "On the planet Earth, if there are at least 23 people in a room, the chance that two of them have the same birthday is greater than 50%."  You would like to come up with more factoids of this form.  Given two integers (minOdds and daysInYear), your method should return the fewest number of people (from a planet where there are daysInYear days in each year) needed such that you can be at least minOdds% sure that two of the people have the same birthday. See example 0 for further information.
 
 DEFINITION
-Class:TheNumbersWithLuckyLastDigit
-Method:find
-Parameters:int
+Class:BirthdayOdds
+Method:minPeople
+Parameters:int, int
 Returns:int
-Method signature:int find(int n)
+Method signature:int minPeople(int minOdds, int daysInYear)
+
+
+NOTES
+-Two people can have the same birthday without being born in the same year.
+-You may assume that the odds of being born on a particular day are (1 / daysInYear).
+-You may assume that there are no leap years.
 
 
 CONSTRAINTS
--n will be between 1 and 1,000,000,000, inclusive.
+-minOdds will be between 1 and 99, inclusive.
+-daysInYear will be between 1 and 10000, inclusive.
+-For any number of people N, the odds that two people will have the same birthday (in a room with N people, on a planet with daysInYear days in each year) will not be within 1e-9 of minOdds. (In other words, you don't need to worry about floating-point precision for this problem.)
 
 
 EXAMPLES
 
 0)
-99
+75
+5
 
 Returns: 4
 
-One of the possible representations is 99=14+24+27+34.
+We must be 75% sure that at least two of the people in the room have the same birthday. This is equivalent to saying that the odds of everyone having different birthdays is 25% or less.
+
+If there is only one person in the room, the odds are 5/5 or 100% that nobody shares a birthday.
+If there are two people in the room, the odds are 5/5 * 4/5 = 80% that nobody shares a birthday. This is because the second person has 4 "safe" days on which his birthday could fall, out of 5 possible days in the year.
+If there are three people in the room, the odds of no overlap are 5/5 * 4/5 * 3/5 = 48%.
+If there are four people in the room, the odds are 5/5 * 4/5 * 3/5 * 2/5 = 19.2%. This means that you can be (100% - 19.2%) = 80.8% sure that two or more of them do, in fact, have the same birthday.
+
+We only need to be 75% sure of this, which was untrue for three people but true for four.  Therefore, your method should return 4.
 
 1)
-11
+50
+365
 
-Returns: 2
+Returns: 23
 
-11=4+7.
+The factoid from the problem statement. If there are 22 people in a room, the odds of a shared birthday are roughly 47.57%. With 23 people, these odds jump to 50.73%, which is greater than or equal to the 50% needed.
 
 2)
-13
+1
+365
 
-Returns: -1
+Returns: 4
 
-It is impossible to achieve the goal.
+Another example from planet Earth. The odds of a repeat birthday among only four people are roughly 1.64%.
 
 3)
-1234567
+84
+9227
 
-Returns: 1
+Returns: 184
 
 */
 // END CUT HERE
@@ -148,10 +156,10 @@ Returns: 1
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
 	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { int Arg0 = 99; int Arg1 = 4; verify_case(0, Arg1, find(Arg0)); }
-	void test_case_1() { int Arg0 = 11; int Arg1 = 2; verify_case(1, Arg1, find(Arg0)); }
-	void test_case_2() { int Arg0 = 13; int Arg1 = -1; verify_case(2, Arg1, find(Arg0)); }
-	void test_case_3() { int Arg0 = 1234567; int Arg1 = 1; verify_case(3, Arg1, find(Arg0)); }
+	void test_case_0() { int Arg0 = 75; int Arg1 = 5; int Arg2 = 4; verify_case(0, Arg2, minPeople(Arg0, Arg1)); }
+	void test_case_1() { int Arg0 = 50; int Arg1 = 365; int Arg2 = 23; verify_case(1, Arg2, minPeople(Arg0, Arg1)); }
+	void test_case_2() { int Arg0 = 1; int Arg1 = 365; int Arg2 = 4; verify_case(2, Arg2, minPeople(Arg0, Arg1)); }
+	void test_case_3() { int Arg0 = 84; int Arg1 = 9227; int Arg2 = 184; verify_case(3, Arg2, minPeople(Arg0, Arg1)); }
 
 // END CUT HERE
 
@@ -162,7 +170,7 @@ Returns: 1
 int main(int argc, char *argv[])
 {
   
-  TheNumbersWithLuckyLastDigit test;
+  BirthdayOdds test;
 
   if(argc == 1) {
     test.run_test(-1);

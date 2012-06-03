@@ -51,36 +51,37 @@ template<typename K, typename V> string to_s(const map<K,V>& v);
 #define DUMP(x) 
 #endif
 
-class TheNumbersWithLuckyLastDigit {
+class SlayingDeer {
 
  public:
-  int find(int n)
+  int getTime(int A, int B, int C)
   {
     // -- main code --
-    vector< pair<int, int> > mp(10, make_pair(100000, 100000));
+    if(A * 45 <= B * 30) return -1;
 
-    TIMES(a, 100) {
-      TIMES(b, 100) {
-        if(a + b == 0) continue;
-        int s = a * 4 + b * 7;
-        pair<int,int>& r = mp[s % 10];
-        if(r.first + r.second > a + b) {
-          r = make_pair(a, b);
-        }else if(r.first + r.second == a + b) {
-          if(r.first * 4 + r.second * 7 > a * 4 + b * 7) {
-            r = make_pair(a, b);
-          }
-        }
+    int d = A * 45 - B * 30;
+
+    int t = (C / d) * 45;
+    int r = C - (C / d) * d;
+
+    // DUMP(A);DUMP(B);
+    // DUMP(d);DUMP(t);DUMP(r);
+
+    if(r == 0) {
+    } else if(A <= B) {
+      r += B * 30;
+      t += (r % A == 0 ? r / A : r / A + 1);
+    } else {
+      int v = A - B;
+      if(r <= 30 * v) {
+        t += (r % v == 0 ? r / v : r / v + 1);
+      }else {
+        r -= 30 * v;
+        t += 30 + (r % A == 0 ? r / A : r / A + 1);
       }
     }
-
-    int d = n % 10;
-    pair<int, int>& p = mp[d];
-    if(n >= p.first * 4 + p.second * 7) {
-      return p.first + p.second;
-    }else {
-      return -1;
-    }
+    
+    return t;	
   }
 
 // BEGIN CUT HERE
@@ -89,54 +90,67 @@ class TheNumbersWithLuckyLastDigit {
   }
 /*
 // PROBLEM STATEMENT
-// 
-John believes that the digits 4 and 7 are lucky, and all other digits are unlucky.
-A positive integer is called a lucky number if its last digit is lucky.
-For example, 4, 14 and 207 are lucky numbers, while 40, 741 and 3 are not lucky numbers.
-John would like to represent the int n as a sum of only lucky numbers, and he would like to do this using the minimal possible number of summands.
-Return the number of summands in the representation, or -1 if it is impossible to achieve the goal.
+// Although TopCoder member Running Wild is a vegetarian, he has recently decided that he would eat venison if he could catch a deer himself. Before committing too much time and effort to this endeavor, Running Wild would like to estimate his chances at success. To do this, he assumes that he will run at a constant speed of A meters per minute without ever getting tired. Similarly, a deer will run at a constant speed of B meters per minute, but after every 30 minutes of running, it must stop and rest for 15 minutes. Finally, Running Wild also assumes that he will begin at a given distance of C meters behind the deer, and that they will always be running in the same fixed direction.
 
-
+Create a class SlayingDeer that contains a method getTime, which is given an int A, an int B, and an int C, representing the quantities described above. The method should return the number of minutes (rounded up) it will take for Running Wild to catch the deer. If Running Wild will never catch the deer, the method should return -1.
 
 DEFINITION
-Class:TheNumbersWithLuckyLastDigit
-Method:find
-Parameters:int
+Class:SlayingDeer
+Method:getTime
+Parameters:int, int, int
 Returns:int
-Method signature:int find(int n)
+Method signature:int getTime(int A, int B, int C)
+
+
+NOTES
+-If Running Wild and the deer are at precisely the same position, then Running Wild is considered to have caught the deer.
 
 
 CONSTRAINTS
--n will be between 1 and 1,000,000,000, inclusive.
+-A and B will be between 1 and 1000 inclusive.
+-C will be between 1 and 100000 inclusive.
 
 
 EXAMPLES
 
 0)
-99
+5
+4
+20
 
-Returns: 4
+Returns: 20
 
-One of the possible representations is 99=14+24+27+34.
+Running Wild gains one meter per minute over the first 20 minutes before catching the deer.
 
 1)
-11
+5
+4
+47
 
-Returns: 2
+Returns: 34
 
-11=4+7.
+As in the previous example, Running Wild will gain 1 meter per minute for the first 30 minutes. Then, however, the deer stops and rests. Running Wild gains 5 meters per minute while the deer is resting. Note that the answer is rounded up.
 
 2)
-13
+10
+17
+1
 
 Returns: -1
 
-It is impossible to achieve the goal.
-
 3)
-1234567
+133
+198
+7515
 
-Returns: 1
+Returns: 7515
+
+4)
+1
+1000
+15819
+
+Returns: -1
 
 */
 // END CUT HERE
@@ -144,14 +158,15 @@ Returns: 1
   
 // BEGIN CUT HERE
 	public:
-	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); }
+	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); if ((Case == -1) || (Case == 4)) test_case_4(); }
 	private:
 	template <typename T> string print_array(const vector<T> &V) { ostringstream os; os << "{ "; for (typename vector<T>::const_iterator iter = V.begin(); iter != V.end(); ++iter) os << '\"' << *iter << "\","; os << " }"; return os.str(); }
 	void verify_case(int Case, const int &Expected, const int &Received) { cerr << "Test Case #" << Case << "..."; if (Expected == Received) cerr << "PASSED" << endl; else { cerr << "FAILED" << endl; cerr << "\tExpected: \"" << Expected << '\"' << endl; cerr << "\tReceived: \"" << Received << '\"' << endl; } }
-	void test_case_0() { int Arg0 = 99; int Arg1 = 4; verify_case(0, Arg1, find(Arg0)); }
-	void test_case_1() { int Arg0 = 11; int Arg1 = 2; verify_case(1, Arg1, find(Arg0)); }
-	void test_case_2() { int Arg0 = 13; int Arg1 = -1; verify_case(2, Arg1, find(Arg0)); }
-	void test_case_3() { int Arg0 = 1234567; int Arg1 = 1; verify_case(3, Arg1, find(Arg0)); }
+	void test_case_0() { int Arg0 = 5; int Arg1 = 4; int Arg2 = 20; int Arg3 = 20; verify_case(0, Arg3, getTime(Arg0, Arg1, Arg2)); }
+	void test_case_1() { int Arg0 = 5; int Arg1 = 4; int Arg2 = 47; int Arg3 = 34; verify_case(1, Arg3, getTime(Arg0, Arg1, Arg2)); }
+	void test_case_2() { int Arg0 = 10; int Arg1 = 17; int Arg2 = 1; int Arg3 = -1; verify_case(2, Arg3, getTime(Arg0, Arg1, Arg2)); }
+	void test_case_3() { int Arg0 = 133; int Arg1 = 198; int Arg2 = 7515; int Arg3 = 7515; verify_case(3, Arg3, getTime(Arg0, Arg1, Arg2)); }
+	void test_case_4() { int Arg0 = 1; int Arg1 = 1000; int Arg2 = 15819; int Arg3 = -1; verify_case(4, Arg3, getTime(Arg0, Arg1, Arg2)); }
 
 // END CUT HERE
 
@@ -162,7 +177,7 @@ Returns: 1
 int main(int argc, char *argv[])
 {
   
-  TheNumbersWithLuckyLastDigit test;
+  SlayingDeer test;
 
   if(argc == 1) {
     test.run_test(-1);
